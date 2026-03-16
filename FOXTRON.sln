@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX_Console", "FX_Console\FX_Console.csproj", "{AD9580B0-23D3-431C-80DA-E8D78C471B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX_Core", "FX_Core\FX_Core.csproj", "{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD9580B0-23D3-431C-80DA-E8D78C471B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9580B0-23D3-431C-80DA-E8D78C471B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9580B0-23D3-431C-80DA-E8D78C471B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9580B0-23D3-431C-80DA-E8D78C471B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3535643B-F49C-4090-B86B-2F62F5356C65}
+	EndGlobalSection
+EndGlobal
