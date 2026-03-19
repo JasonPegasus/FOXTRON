@@ -9,8 +9,12 @@ using Swed64;
 
 namespace FX_Core
 {
-    public static class Memory
+    public class Memory
     {
+        public Process proc;
+        public Memory(Process proc)
+        { this.proc = proc; }
+
         [DllImport("kernel32.dll")]
         static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
 
@@ -35,10 +39,12 @@ namespace FX_Core
         }
 
 
-        public static List<IntPtr> ScanFloatRange(Process process, float min, float max)
-        { return ScanFloatPredicate(process, p => (p>=min && p<=max)); }
 
-        public static List<IntPtr> ScanFloatPredicate(Process process, Predicate<float> filter)
+
+        public List<IntPtr> ScanFloatRange(float min, float max)
+        { return ScanFloatFiltered(p => (p>=min && p<=max)); }
+
+        public List<IntPtr> ScanFloatFiltered(Predicate<float> filter)
         {
             List<IntPtr> results = new();
 
@@ -48,7 +54,7 @@ namespace FX_Core
             {
                 MEMORY_BASIC_INFORMATION m;
 
-                int result = VirtualQueryEx(process.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION)));
+                int result = VirtualQueryEx(proc.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION)));
 
                 if (result == 0)
                     break;
