@@ -12,19 +12,10 @@ namespace FX_Core
     public static class Memory
     {
         [DllImport("kernel32.dll")]
-        static extern int VirtualQueryEx(
-        IntPtr hProcess,
-        IntPtr lpAddress,
-        out MEMORY_BASIC_INFORMATION lpBuffer,
-        uint dwLength);
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
 
         [DllImport("kernel32.dll")]
-        static extern bool ReadProcessMemory(
-        IntPtr hProcess,
-        IntPtr lpBaseAddress,
-        byte[] lpBuffer,
-        int dwSize,
-        out IntPtr lpNumberOfBytesRead);
+        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
 
         public struct MEMORY_BASIC_INFORMATION
         {
@@ -37,8 +28,17 @@ namespace FX_Core
             public uint Type;
         }
 
+        public struct Pointer
+        {
+            public IntPtr Ptr;
+            public float value;
+        }
+
 
         public static List<IntPtr> ScanFloatRange(Process process, float min, float max)
+        { return ScanFloatPredicate(process, p => (p>=min && p<=max)); }
+
+        public static List<IntPtr> ScanFloatPredicate(Process process, Predicate<float> filter)
         {
             List<IntPtr> results = new();
 
@@ -48,40 +48,26 @@ namespace FX_Core
             {
                 MEMORY_BASIC_INFORMATION m;
 
-                int result = VirtualQueryEx(
-                    process.Handle,
-                    address,
-                    out m,
-                    (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION)));
+                int result = VirtualQueryEx(process.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION)));
 
                 if (result == 0)
                     break;
 
-                bool isReadable =
-                    m.State == 0x1000 &&          // MEM_COMMIT
-                    (m.Protect & 0x01) == 0;      // not PAGE_NOACCESS
-
-                if (isReadable)
+                if (m.State == 0x1000 && (m.Protect & 0x01) == 0)
                 {
                     int size = (int)m.RegionSize;
 
                     byte[] buffer = new byte[size];
 
-                    if (ReadProcessMemory(
-                        process.Handle,
-                        m.BaseAddress,
-                        buffer,
-                        size,
-                        out _))
+                    if (ReadProcessMemory(process.Handle, m.BaseAddress, buffer, size, out _))
                     {
                         for (int i = 0; i < size - 4; i++)
                         {
                             float value = BitConverter.ToSingle(buffer, i);
 
-                            if (value >= min && value <= max)
+                            if (filter(value))
                             {
-                                long found =
-                                    m.BaseAddress.ToInt64() + i;
+                                long found = m.BaseAddress.ToInt64() + i;
 
                                 results.Add((IntPtr)found);
                             }
@@ -89,10 +75,7 @@ namespace FX_Core
                     }
                 }
 
-                address =
-                    new IntPtr(
-                        m.BaseAddress.ToInt64() +
-                        (long)m.RegionSize);
+                address = new IntPtr(m.BaseAddress.ToInt64() + (long)m.RegionSize);
             }
 
             return results;
