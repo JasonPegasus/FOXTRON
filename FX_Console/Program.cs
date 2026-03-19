@@ -28,7 +28,7 @@ internal class Program
                     case "help": help(); break;
                     case "attach": tryAttach(); break;
                     case "detach": tryDetach(); break;
-                    case "find": Core.tryFindAll(); break;
+                    case "find": findCommand(); break;
                     default: break;
                 }
             }
@@ -42,12 +42,7 @@ internal class Program
 
     static void findCommand()
     {
-        ConsUtils.print("What do you want to find?", ConsUtils.subtitleColor);
-        switch (Console.ReadLine().ToLower())
-        {
-            case "find": findCommand(); break;
-            default: ConsUtils.print("Invalid object to find", ConsUtils.userError); break;
-        }
+        
     }
 
     static void help()
