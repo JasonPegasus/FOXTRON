@@ -32,17 +32,16 @@ internal class Program
                     default: break;
                 }
             }
-            catch (Exception e)
-            {
-                ConsUtils.print("Unexpected and Unhandled exception!! (Basically a FATAL ERROR)", ConsUtils.programError);
-                ConsUtils.print(e.Message, ConsUtils.programError);
-            }
+            catch (Exception e) { ConsUtils.print(e.Message, ConsUtils.programError); }
         }
     }
 
     static void findCommand()
     {
-        
+        foreach (IntPtr ptr in Core.scanner.Find360())
+        {
+            ConsUtils.print($"Ptr: {ptr} | Value: {Core.scanner.Memory().ReadFloat(ptr)}");
+        }
     }
 
     static void help()
@@ -53,26 +52,22 @@ internal class Program
 
     static void tryAttach()
     {
+        if (Core.isAttached()) 
+        { ConsUtils.print("A process is already attached! Try typing 'Detach' before attaching something else", ConsUtils.userError); return; }
+
         try
         {
-            Process proc = ProcessManager.attachTo(processSelection());
-            if (proc != null)
-            {
-                ConsUtils.print("Succesfully Attached!", ConsUtils.successColor);
-                ConsUtils.print($"   {proc.ProcessName} ({proc.Id})", ConsUtils.successSubColor);
-            }
-            else
-            {
-                ConsUtils.print("Selected process no longer exists! Try again...", ConsUtils.programError);
-            }
+            Process proc = Core.Attach(processSelection()).Process();
+            ConsUtils.print("Succesfully Attached!", ConsUtils.successColor);
+            ConsUtils.print($"   {proc.ProcessName} ({proc.Id})", ConsUtils.successSubColor);
         }
-        catch (Exception e) 
-        { throw new Exception("Error on tryAttach():\r\n" + e.Message); }
+        catch (Exception e)
+        { throw new Exception("- Error on Program.tryAttach():\r\n" + e.Message); }
     }
 
     static void tryDetach()
     {
-        if (ProcessManager.detach())
+        if (Core.Detach())
         {
             ConsUtils.print("Succesfully Detached!", ConsUtils.successColor);
         }

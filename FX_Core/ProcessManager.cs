@@ -20,34 +20,19 @@ namespace FX_Core
 
         public static bool isUserProcess(Process process)
         { return !(process.SessionId == 0); }
-        
 
-        public static Swed proc;
-        static IntPtr moduleBase;
-
-        public static Process attachTo(Process selectedProc)
-        {
-            if (selectedProc == null) { return null; }
-            try
-            {
-                proc = new Swed(selectedProc.ProcessName);
-                moduleBase = proc.GetModuleBase(selectedProc.MainModule.ModuleName);
-                return selectedProc;
-            }
-            catch (Exception e)
-            {
-                proc = null;
-                moduleBase = IntPtr.Zero;
-                throw new Exception("Error when attaching:\r\n" + e.Message);
-            }
-        }
-
-        public static bool detach()
-        {
-            moduleBase = IntPtr.Zero;
-            if (proc == null) { return false; }
-            proc = null; return true;
-        }
+        //public static Memory attachTo(Process selectedProc)
+        //{
+        //    if (selectedProc == null) { return null; }
+        //    try
+        //    {
+        //        return new Memory(selectedProc);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new Exception("Error when attaching:\r\n" + e.Message);
+        //    }
+        //}
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,35 +12,22 @@ namespace FX_Core
 {
     public class Memory
     {
-        public Process proc;
-        public Memory(Process proc)
-        { this.proc = proc; }
-
+        ////////////////////////////////////// KERNEL IMPORTS //////////////////////////////////////
         [DllImport("kernel32.dll")]
         static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
-
         [DllImport("kernel32.dll")]
-        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
 
-        public struct MEMORY_BASIC_INFORMATION
-        {
-            public IntPtr BaseAddress;
-            public IntPtr AllocationBase;
-            public uint AllocationProtect;
-            public IntPtr RegionSize;
-            public uint State;
-            public uint Protect;
-            public uint Type;
-        }
+        ////////////////////////////////////// PROCESS AND ACCESSES //////////////////////////////////////
+        Process _proc;
+        public Memory(Process proc)
+        { this._proc = proc; }
 
-        public struct Pointer
-        {
-            public IntPtr Ptr;
-            public float value;
-        }
+        public bool isProcessValid() { return _proc != null && !_proc.HasExited; }
 
+        public Process getProcess() { return _proc; }
 
-
+        ////////////////////////////////////// SCANNING AND SEARCHING ///////////////////////////////////////
 
         public List<IntPtr> ScanFloatRange(float min, float max)
         { return ScanFloatFiltered(p => (p>=min && p<=max)); }
@@ -54,10 +42,7 @@ namespace FX_Core
             {
                 MEMORY_BASIC_INFORMATION m;
 
-                int result = VirtualQueryEx(proc.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION)));
-
-                if (result == 0)
-                    break;
+                if (VirtualQueryEx(_proc.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))) == 0) { break; };
 
                 if (m.State == 0x1000 && (m.Protect & 0x01) == 0)
                 {
@@ -65,26 +50,46 @@ namespace FX_Core
 
                     byte[] buffer = new byte[size];
 
-                    if (ReadProcessMemory(process.Handle, m.BaseAddress, buffer, size, out _))
+                    if (ReadProcessMemory(_proc.Handle, m.BaseAddress, buffer, size, out _))
                     {
                         for (int i = 0; i < size - 4; i++)
                         {
-                            float value = BitConverter.ToSingle(buffer, i);
-
-                            if (filter(value))
-                            {
-                                long found = m.BaseAddress.ToInt64() + i;
-
-                                results.Add((IntPtr)found);
+                            if (filter(BitConverter.ToSingle(buffer, i)))
+                            { 
+                                results.Add((IntPtr) m.BaseAddress.ToInt64() + i); 
                             }
                         }
                     }
                 }
-
                 address = new IntPtr(m.BaseAddress.ToInt64() + (long)m.RegionSize);
             }
-
             return results;
+        }
+
+        /////////////////////////////////// READ & WRITE //////////////////////////////////////
+
+        public byte[] ReadBytes(IntPtr ptr, int bytes)
+        {
+            byte[] buffer = new byte[bytes];
+            ReadProcessMemory(_proc.Handle, ptr, buffer, bytes, out _);
+            return buffer;
+        }
+
+        public float ReadFloat(IntPtr address)
+        { return BitConverter.ToSingle(ReadBytes(address, 4)); }
+
+
+        ////////////////////////////////////// OTHER //////////////////////////////////////
+
+        public struct MEMORY_BASIC_INFORMATION
+        {
+            public IntPtr BaseAddress;
+            public IntPtr AllocationBase;
+            public uint AllocationProtect;
+            public IntPtr RegionSize;
+            public uint State;
+            public uint Protect;
+            public uint Type;
         }
     }
 }
