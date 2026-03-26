@@ -62,7 +62,7 @@ internal class Program
             ConsUtils.print($"   {proc.ProcessName} ({proc.Id})", ConsUtils.successSubColor);
         }
         catch (Exception e)
-        { throw new Exception("- Error on Program.tryAttach():\r\n" + e.Message); }
+        { throw new Exception("- Error on Program.tryAttach():\r\n" + e.Message); } 
     }
 
     static void tryDetach()

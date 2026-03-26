@@ -13,15 +13,16 @@ namespace FX_Core
     public class Memory
     {
         ////////////////////////////////////// KERNEL IMPORTS //////////////////////////////////////
-        [DllImport("kernel32.dll")]
-        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
-        [DllImport("kernel32.dll")]
-        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+        ///
+        [DllImport("kernel32.dll")] static extern int  VirtualQueryEx   (IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
 
         ////////////////////////////////////// PROCESS AND ACCESSES //////////////////////////////////////
+        ///
         Process _proc;
-        public Memory(Process proc)
-        { this._proc = proc; }
+
+        public Memory(Process proc) { this._proc = proc; }
 
         public bool isProcessValid() { return _proc != null && !_proc.HasExited; }
 
@@ -30,7 +31,7 @@ namespace FX_Core
         ////////////////////////////////////// SCANNING AND SEARCHING ///////////////////////////////////////
 
         public List<IntPtr> ScanFloatRange(float min, float max)
-        { return ScanFloatFiltered(p => (p>=min && p<=max)); }
+        { return ScanFloatFiltered(p => (p >= min && p <= max)); }
 
         public List<IntPtr> ScanFloatFiltered(Predicate<float> filter)
         {
