@@ -38,10 +38,11 @@ internal class Program
 
     static void findCommand()
     {
-        foreach (IntPtr ptr in Core.scanner.Find360())
-        {
-            ConsUtils.print($"Ptr: {ptr} | Value: {Core.scanner.Memory().ReadFloat(ptr)}");
-        }
+        ConsUtils.print("Results: " + Core.scanner.Find360().Count, ConsUtils.successColor);
+        //foreach (IntPtr ptr in Core.scanner.Find360())
+        //{
+        //    ConsUtils.print($"Ptr: {ptr} | Value: {Core.scanner.Memory().ReadFloat(ptr)}", ConsUtils.randomColor);
+        //}
     }
 
     static void help()

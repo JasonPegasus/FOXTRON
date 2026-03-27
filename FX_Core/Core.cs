@@ -4,6 +4,10 @@ namespace FX_Core
 {
     public static class Core
     {
+        //////////////////////////// GLOBAL USAGE ////////////////////////////
+
+        public static Random random = new Random();
+
         //////////////////////////// ATTACHING ////////////////////////////
         public static Scanner scanner { get; private set; }
 

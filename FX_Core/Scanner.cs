@@ -9,6 +9,8 @@ namespace FX_Core
 {
     public class Scanner
     {
+        /////////////////////////////// PUBLIC STUFF ///////////////////////////////
+        
         Memory MEM;
 
         public Scanner(Process process) { MEM = new Memory(process); }
@@ -19,10 +21,15 @@ namespace FX_Core
 
         public Memory Memory() { return MEM; }
 
+        /////////////////////////////// SCANNING METHODS ///////////////////////////////
+
+        bool Between(float num, float min, float max) { return (num >= min && num <= max); }
+
         public List<IntPtr> Find360()
         {
-            return MEM.ScanFloatRange(-360, 360);
+            return MEM.ScanFloatFiltered(e => float.Round(e) != 0 && Between(e, -360, 360));
         }
+
 
     }
 }

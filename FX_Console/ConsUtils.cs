@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FX_Core;
 
 namespace FX_Console
 {
@@ -18,6 +19,7 @@ namespace FX_Console
         public static ConsoleColor programError = ConsoleColor.DarkRed;
         public static ConsoleColor successColor = ConsoleColor.Green;
         public static ConsoleColor successSubColor = ConsoleColor.DarkGreen;
+        public static ConsoleColor randomColor => (ConsoleColor)Core.random.Next(1, 16);
 
         public static void empty() { Console.WriteLine(); }
 
