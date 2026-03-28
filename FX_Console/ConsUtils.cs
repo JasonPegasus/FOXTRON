@@ -19,7 +19,7 @@ namespace FX_Console
         public static ConsoleColor programError = ConsoleColor.DarkRed;
         public static ConsoleColor successColor = ConsoleColor.Green;
         public static ConsoleColor successSubColor = ConsoleColor.DarkGreen;
-        public static ConsoleColor randomColor => (ConsoleColor)Core.random.Next(1, 16);
+        public static ConsoleColor randomColor => (ConsoleColor)Shared.random.Next(1, 16);
 
         public static void empty() { Console.WriteLine(); }
 

@@ -27,8 +27,18 @@ internal class Program
                 {
                     case "help": help(); break;
                     case "attach": tryAttach(); break;
+                    case "attach to": tryAttach(Console.ReadLine()); break;
                     case "detach": tryDetach(); break;
                     case "find": findCommand(); break;
+                    case "move":
+                        ConsUtils.print("suc?: "+ ProcessManager.SetForegroundWindow(Core.scanner.Process().MainWindowHandle), ConsUtils.userError);
+                        ConsUtils.print(Core.scanner.Process().ProcessName);
+                        for (int i = 0; i < 50; i++)
+                        {
+                            Thread.Sleep(10);
+                            InputSimulator.MoveMouse(100, 0);
+                        }
+                        break;
                     default: break;
                 }
             }
@@ -38,11 +48,8 @@ internal class Program
 
     static void findCommand()
     {
-        ConsUtils.print("Results: " + Core.scanner.Find360().Count, ConsUtils.successColor);
-        //foreach (IntPtr ptr in Core.scanner.Find360())
-        //{
-        //    ConsUtils.print($"Ptr: {ptr} | Value: {Core.scanner.Memory().ReadFloat(ptr)}", ConsUtils.randomColor);
-        //}
+        ConsUtils.print("Attemping to find camera...", ConsUtils.titleColor);
+        Core.scanner.FindCamera();
     }
 
     static void help()
@@ -51,14 +58,16 @@ internal class Program
         ConsUtils.print("Type 'Attach' to get a list of available processes to attach to.", ConsUtils.infoColor);
     }
 
-    static void tryAttach()
+    static void tryAttach(string name = "")
     {
         if (Core.isAttached()) 
         { ConsUtils.print("A process is already attached! Try typing 'Detach' before attaching something else", ConsUtils.userError); return; }
 
         try
         {
-            Process proc = Core.Attach(processSelection()).Process();
+            Process proc;
+            if (name == "") { proc = Core.Attach(processSelection()).Process(); }
+            else { proc = Core.Attach(name).Process(); }
             ConsUtils.print("Succesfully Attached!", ConsUtils.successColor);
             ConsUtils.print($"   {proc.ProcessName} ({proc.Id})", ConsUtils.successSubColor);
         }

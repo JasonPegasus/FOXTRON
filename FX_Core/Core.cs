@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace FX_Core
 {
@@ -6,10 +8,10 @@ namespace FX_Core
     {
         //////////////////////////// GLOBAL USAGE ////////////////////////////
 
-        public static Random random = new Random();
-
         //////////////////////////// ATTACHING ////////////////////////////
         public static Scanner scanner { get; private set; }
+
+        public static Scanner Attach(string processName) { return Attach(Process.GetProcessesByName(processName)[0]); }
 
         public static Scanner Attach(Process process)
         {

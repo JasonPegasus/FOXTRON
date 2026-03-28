@@ -8,31 +8,30 @@ using System;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 
 namespace FX_Core
 {
     public static class ProcessManager
     {
+        [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("ntdll.dll")] static extern int NtSuspendProcess(IntPtr processHandle);
+        [DllImport("ntdll.dll")] static extern int NtResumeProcess(IntPtr processHandle);
+
+        public static void SetPauseProcess(Process process, bool Pause)
+        {
+            if (Pause) 
+            { NtSuspendProcess(process.Handle); return; }
+            NtResumeProcess(process.Handle);
+        }
+
         public static Process[] getUserProcesses()
         { return Process.GetProcesses().Where(isUserProcess).ToArray(); }
 
-
         public static bool isUserProcess(Process process)
         { return !(process.SessionId == 0); }
-
-        //public static Memory attachTo(Process selectedProc)
-        //{
-        //    if (selectedProc == null) { return null; }
-        //    try
-        //    {
-        //        return new Memory(selectedProc);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception("Error when attaching:\r\n" + e.Message);
-        //    }
-        //}
 
     }
 }

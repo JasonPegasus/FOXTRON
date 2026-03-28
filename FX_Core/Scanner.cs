@@ -23,13 +23,38 @@ namespace FX_Core
 
         /////////////////////////////// SCANNING METHODS ///////////////////////////////
 
-        bool Between(float num, float min, float max) { return (num >= min && num <= max); }
+        bool Between(float num, float min, float max) { return num >= min && num <= max; }
 
-        public List<IntPtr> Find360()
+        Dictionary<IntPtr, float> Find360()
         {
             return MEM.ScanFloatFiltered(e => float.Round(e) != 0 && Between(e, -360, 360));
         }
 
+
+        /////////////////////////////// CURRENT SCAN DATA ///////////////////////////////
+
+
+        public IntPtr FindCamera(int cleans = 20)
+        {
+            Dictionary<IntPtr, float> values = Find360();
+            Shared.Log($"Found {values.Count} 360 values");
+
+            ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
+            for (int i = 0; i < cleans; i++)
+            {
+                InputSimulator.MoveMouse(10, 0);
+                ProcessManager.SetPauseProcess(Process(), true);
+                Task.Delay(10).Wait();
+                Shared.Log($"Removed {Shared.FilterPointerDictionary(ref values, e => !Between(e, -360, 360))} values!");
+                ProcessManager.SetPauseProcess(Process(), false);
+            }
+            return nint.Zero;
+        }
+
+    }
+
+    class NewScan()
+    {
 
     }
 }

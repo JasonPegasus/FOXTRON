@@ -30,12 +30,9 @@ namespace FX_Core
 
         ////////////////////////////////////// SCANNING AND SEARCHING ///////////////////////////////////////
 
-        public List<IntPtr> ScanFloatRange(float min, float max)
-        { return ScanFloatFiltered(p => (p >= min && p <= max)); }
-
-        public List<IntPtr> ScanFloatFiltered(Predicate<float> filter)
+        public Dictionary<IntPtr, float> ScanFloatFiltered(Predicate<float> filter)
         {
-            List<IntPtr> results = new();
+            Dictionary<IntPtr, float> results = new();
 
             IntPtr address = IntPtr.Zero;
 
@@ -57,7 +54,8 @@ namespace FX_Core
                         {
                             if (filter(BitConverter.ToSingle(buffer, i)))
                             { 
-                                results.Add((IntPtr) m.BaseAddress.ToInt64() + i); 
+                                IntPtr p = (IntPtr) m.BaseAddress.ToInt64() + i;
+                                results[p] = ReadFloat(p); 
                             }
                         }
                     }
