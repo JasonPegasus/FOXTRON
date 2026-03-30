@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX_Console", "FX_Console\FX_Console.csproj", "{AD9580B0-23D3-431C-80DA-E8D78C471B02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FX_Console", "FX_Console\FX_Console.csproj", "{AD9580B0-23D3-431C-80DA-E8D78C471B02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX_Core", "FX_Core\FX_Core.csproj", "{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FX_Core", "FX_Core\FX_Core.csproj", "{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX_UnsafeMemory", "FX_UnsafeMemory\FX_UnsafeMemory.csproj", "{1D56ACF0-ABCC-49B9-8953-7DF63511A3EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79AB93C9-C6E4-4933-8DAF-5C26B86D3E8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D56ACF0-ABCC-49B9-8953-7DF63511A3EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D56ACF0-ABCC-49B9-8953-7DF63511A3EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D56ACF0-ABCC-49B9-8953-7DF63511A3EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D56ACF0-ABCC-49B9-8953-7DF63511A3EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
