@@ -13,8 +13,13 @@ namespace FX_Core
         /////////////////////////////// PUBLIC STUFF ///////////////////////////////
         
         Memory MEM;
+        bool pauseScan;
 
-        public Scanner(Process process) { MEM = new Memory(process); }
+        public Scanner(Process process, bool pauseWhileScanning)
+        { 
+            pauseScan = pauseWhileScanning;
+            MEM = new Memory(process); 
+        }
 
         public bool isProcessValid() { return MEM != null && MEM.isProcessValid(); }
         
@@ -34,8 +39,13 @@ namespace FX_Core
 
         /////////////////////////////// CURRENT SCAN DATA ///////////////////////////////
 
+        void Pause(bool p) 
+        {
+            if (!pauseScan) { return; }
+            ProcessManager.SetPauseProcess(Process(), p); 
+        }
 
-        public IntPtr FindCamera(int cleans = 20)
+        public IntPtr FindCamera(bool pauseScan = true,  int cleans = 20)
         {
             List<IntPtr> values = Find360();
             Shared.Log($"Found {values.Count} 360 values");
@@ -43,17 +53,14 @@ namespace FX_Core
             for (int i = 0; i < cleans; i++)
             {
                 ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
-                InputSimulator.MoveMouse(10, 0);
-                Shared.Log($"Removed {values.RemoveAll(e => !Between(MEM.ReadFloat(e), -360, 360))} values! ({values.Count} remaining)");
-                Task.Delay(10).Wait();
+                Thread.Sleep(10);
+                InputSimulator.MoveMouse(50, 0);
+                Thread.Sleep(10);
+                Pause(true && pauseScan);
+                Shared.Log($"Removed {MEM.FilterValues(ref values, e => Between(e, -360, 360))} values! ({values.Count} remaining)");
+                Pause(false);
             }
             return nint.Zero;
         }
-
-    }
-
-    class NewScan()
-    {
-
     }
 }

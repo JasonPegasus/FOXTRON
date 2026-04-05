@@ -80,35 +80,32 @@ namespace FX_UnsafeMemory
             return results;
         }
 
-        public unsafe List<IntPtr> FilterValues(List<IntPtr> grouped,Predicate<float> filter , int chunkSize = 0x1000)
+        public unsafe int FilterValues(ref List<IntPtr> addresses, Predicate<float> filter, int chunkSize = 0x1000) // 4KB default
         {
-            List<IntPtr> newValues = new();
+            List<IntPtr> result = new List<IntPtr>(addresses.Count);
+            int ogSize = addresses.Count;
 
-            foreach (var group in grouped)
+            foreach (var group in addresses.GroupBy(addr => addr.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
             {
                 long baseAddr = group.Key * chunkSize;
-
                 byte[] buffer = new byte[chunkSize];
 
-                if (ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, chunkSize, out _))
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, chunkSize, out _)) continue;
+
+                fixed (byte* ptr = buffer)
                 {
-                    unsafe
+                    foreach (var addr in group)
                     {
-                        fixed (byte* ptr = buffer)
-                        {
-                            foreach (var addr in group)
-                            {
-                                int offset = (int)(addr.ToInt64() - baseAddr);
+                        int offset = (int)(addr.ToInt64() - baseAddr);
 
-                                float value = *(float*)(ptr + offset);
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad (por si cae justo en el borde)
 
-                                if (filter(value))
-                                    newValues.Add(addr);
-                            }
-                        }
+                        if (filter(*(float*)(ptr + offset))) { result.Add(addr); }
                     }
                 }
             }
+            addresses = new List<IntPtr>(result);
+            return ogSize - addresses.Count;
         }
 
         /////////////////////////////////// READ & WRITE //////////////////////////////////////
