@@ -98,8 +98,10 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad (por si cae justo en el borde)
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
 
+                        // en resumen, el (float*) castea el (ptr + offset) para que sea un puntero, y el * del inicio (*(float*)...)
+                        // como que lo convierte para que sea directamente el valor otra vez, ya que *ptr es igual a el valor del pointer
                         if (filter(*(float*)(ptr + offset))) { result.Add(addr); }
                     }
                 }

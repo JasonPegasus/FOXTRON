@@ -15,7 +15,7 @@ namespace FX_Core
         Memory MEM;
         bool pauseScan;
 
-        public Scanner(Process process, bool pauseWhileScanning)
+        public Scanner(Process process, bool pauseWhileScanning = true)
         { 
             pauseScan = pauseWhileScanning;
             MEM = new Memory(process); 
@@ -45,7 +45,7 @@ namespace FX_Core
             ProcessManager.SetPauseProcess(Process(), p); 
         }
 
-        public IntPtr FindCamera(bool pauseScan = true,  int cleans = 20)
+        public IntPtr FindCamera(int cleans = 20)
         {
             List<IntPtr> values = Find360();
             Shared.Log($"Found {values.Count} 360 values");
@@ -56,7 +56,7 @@ namespace FX_Core
                 Thread.Sleep(10);
                 InputSimulator.MoveMouse(50, 0);
                 Thread.Sleep(10);
-                Pause(true && pauseScan);
+                Pause(true);
                 Shared.Log($"Removed {MEM.FilterValues(ref values, e => Between(e, -360, 360))} values! ({values.Count} remaining)");
                 Pause(false);
             }
