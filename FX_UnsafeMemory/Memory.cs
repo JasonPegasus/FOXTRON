@@ -80,12 +80,12 @@ namespace FX_UnsafeMemory
             return results;
         }
 
-        public unsafe int FilterValues(ref List<IntPtr> addresses, Predicate<float> filter, int chunkSize = 0x1000) // 4KB default
+        public unsafe int FilterValues(ref List<IntPtr> ptrs, Predicate<float> filter, int chunkSize = 0x1000) // 4KB default
         {
-            List<IntPtr> result = new List<IntPtr>(addresses.Count);
-            int ogSize = addresses.Count;
+            List<IntPtr> result = new List<IntPtr>(ptrs.Count);
+            int ogSize = ptrs.Count;
 
-            foreach (var group in addresses.GroupBy(addr => addr.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            foreach (var group in ptrs.GroupBy(addr => addr.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
             {
                 long baseAddr = group.Key * chunkSize;
                 byte[] buffer = new byte[chunkSize];
@@ -106,8 +106,38 @@ namespace FX_UnsafeMemory
                     }
                 }
             }
-            addresses = new List<IntPtr>(result);
-            return ogSize - addresses.Count;
+            ptrs = new List<IntPtr>(result);
+            return ogSize - ptrs.Count;
+        }
+
+        public unsafe int CompareFilterValues(ref List<IntPtr> ptrs, Dictionary<IntPtr, float> oldPtrs, Predicate<float> filter, int chunkSize = 0x1000) // 4KB default
+        {
+            List<IntPtr> result = new List<IntPtr>(ptrs.Count);
+            int ogSize = ptrs.Count;
+
+            foreach (var group in ptrs.GroupBy(addr => addr.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            {
+                long baseAddr = group.Key * chunkSize;
+                byte[] buffer = new byte[chunkSize];
+
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, chunkSize, out _)) continue;
+
+                fixed (byte* ptr = buffer)
+                {
+                    foreach (var addr in group)
+                    {
+                        int offset = (int)(addr.ToInt64() - baseAddr);
+
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
+
+                        // en resumen, el (float*) castea el (ptr + offset) para que sea un puntero, y el * del inicio (*(float*)...)
+                        // como que lo convierte para que sea directamente el valor otra vez, ya que *ptr es igual a el valor del pointer
+                        if (filter(*(float*)(ptr + offset))) { result.Add(addr); }
+                    }
+                }
+            }
+            ptrs = new List<IntPtr>(result);
+            return ogSize - ptrs.Count;
         }
 
         /////////////////////////////////// READ & WRITE //////////////////////////////////////

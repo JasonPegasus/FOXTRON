@@ -15,7 +15,7 @@ namespace FX_Core
         Memory MEM;
         bool pauseScan;
 
-        public Scanner(Process process, bool pauseWhileScanning = true)
+        public Scanner(Process process, bool pauseWhileScanning = false)
         { 
             pauseScan = pauseWhileScanning;
             MEM = new Memory(process); 
@@ -57,7 +57,7 @@ namespace FX_Core
                 InputSimulator.MoveMouse(50, 0);
                 Thread.Sleep(10);
                 Pause(true);
-                Shared.Log($"Removed {MEM.FilterValues(ref values, e => Between(e, -360, 360))} values! ({values.Count} remaining)");
+                MEM.FilterValues(Between(e, -360, 360))
                 Pause(false);
             }
             return nint.Zero;
