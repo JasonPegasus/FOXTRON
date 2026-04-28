@@ -27,6 +27,9 @@ namespace FX_Core
             NtResumeProcess(process.Handle);
         }
 
+        public static void SetFoxtronHighPriority(bool high)
+        { Process.GetCurrentProcess().PriorityClass = (high ? ProcessPriorityClass.High : ProcessPriorityClass.Normal); }
+
         public static Process[] getUserProcesses()
         { return Process.GetProcesses().Where(isUserProcess).ToArray(); }
 

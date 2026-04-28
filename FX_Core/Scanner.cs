@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using FX_UnsafeMemory;
@@ -31,7 +32,7 @@ namespace FX_Core
 
         bool Between(float num, float min, float max) { return num >= min && num <= max; }
 
-        List<IntPtr> Find360()
+        Dictionary<IntPtr, float> Find360()
         {
             return MEM.ScanFloatFiltered(e => float.Round(e) != 0 && Between(e, -360, 360));
         }
@@ -47,19 +48,65 @@ namespace FX_Core
 
         public IntPtr FindCamera(int cleans = 20)
         {
-            List<IntPtr> values = Find360();
-            Shared.Log($"Found {values.Count} 360 values");
+            ProcessManager.SetFoxtronHighPriority(true);
+            Dictionary<IntPtr, float> pointers = Find360();
+            
+            Shared.Log($"Found {pointers.Count} 360 values");
 
-            for (int i = 0; i < cleans; i++)
+            for (int i = 0; i < 5; i++)
             {
                 ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
                 Thread.Sleep(10);
-                InputSimulator.MoveMouse(50, 0);
+                InputSimulator.MoveMouse(20, 0);
                 Thread.Sleep(10);
                 Pause(true);
-                MEM.FilterValues(Between(e, -360, 360))
+                Shared.Log($"Removed {MEM.FilterValues(ref pointers, v => Between(v, -360, 360))} non-360 values! ({pointers.Count} remaining...)");
                 Pause(false);
             }
+
+            for (int i = 0; i < 10; i++)
+            {
+                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
+                Thread.Sleep(10);
+                InputSimulator.MoveMouse(20, 0);
+                Thread.Sleep(10);
+                Pause(true);
+                Shared.Log($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) => a != b)} equal values! ({pointers.Count} remaining...)");
+                Pause(false);
+            }
+
+            Dictionary<nint, float> deltas = new Dictionary<nint, float>();
+
+            for (int i = 0; i < 60; i++)
+            {
+                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
+                Thread.Sleep(10);
+                if (Shared.random.Next(2) == 0)
+                {
+                    InputSimulator.MoveMouse(20, 0);
+                    Thread.Sleep(10);
+                    Pause(true);
+                    Shared.Log($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) =>
+                    {
+                        float delta = b - a;
+
+                        // wrap fix
+                        if (delta > 180) delta -= 360;
+                        if (delta < -180) delta += 360;
+
+                        return Math.Abs(delta) > 0 && delta < 50; // threshold inicial
+                    })} non-proportional values! ({pointers.Count} remaining...)");
+                }
+                else
+                {
+                    Shared.Log($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) => a == b)} non-equal values! ({pointers.Count} remaining...)");
+                }
+                Pause(false);
+            }
+
+            foreach(var ptr in pointers) { Shared.Log($"Ptr: 0x{ptr.Key.ToString("X")} | Value: {ptr.Value}"); }
+
+            ProcessManager.SetFoxtronHighPriority(false);
             return nint.Zero;
         }
     }
