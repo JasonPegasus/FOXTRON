@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static FX_UnsafeMemory.Memory;
 
 namespace FX_UnsafeMemory
 {
@@ -70,6 +71,10 @@ namespace FX_UnsafeMemory
                                     {
                                         results.Add((IntPtr)(baseAddr + offset + i), value);
                                     }
+                                    else if ((baseAddr + offset + i) == (IntPtr)0x6B832B48)
+                                    {
+                                        return new Dictionary<IntPtr, float>();
+                                    }
                                 }
                             }
                         }
@@ -82,7 +87,7 @@ namespace FX_UnsafeMemory
             return results;
         }
 
-        public unsafe int FilterValues(ref Dictionary<IntPtr, float> ptrs, Predicate<float> filter, int chunkSize = 0x4000) // 4KB default
+        public unsafe int FilterValues(ref Dictionary<IntPtr, float> ptrs, Predicate<float> filter, int chunkSize = 0x10000) // 4KB default
         {
             Dictionary<IntPtr, float> result = new Dictionary<IntPtr, float>();
             int ogSize = ptrs.Count;
@@ -108,6 +113,10 @@ namespace FX_UnsafeMemory
                         if (filter(value)) 
                         {
                             result[addr.Key] = value;
+                        }
+                        else if (addr.Key == (IntPtr)0x6B832B48)
+                        {
+                            return 1111111111;
                         }
                     }
                 }
@@ -144,11 +153,45 @@ namespace FX_UnsafeMemory
                         {
                             result.Add(addr.Key, newValue);
                         }
+                        else if (addr.Key == (IntPtr)0x6B832B48)
+                        {
+                            return 333333333;
+                        }
                     }
                 }
             }
             ptrs = new Dictionary<IntPtr, float>(result);
             return ogSize - ptrs.Count;
+        }
+
+        public unsafe int GetValuesDeltas(Dictionary<IntPtr, float> ptrs, ref Dictionary<IntPtr, List<float>> history, int chunkSize = 0x1000) // 4KB default
+        {
+            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            {
+                long baseAddr = group.Key * chunkSize;
+                byte[] buffer = new byte[chunkSize];
+
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr) baseAddr, buffer, chunkSize, out _)) continue;
+
+                fixed (byte* ptr = buffer)
+                {
+                    foreach (var addr in group)
+                    {
+                        int offset = (int)(addr.Key.ToInt64() - baseAddr);
+
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
+
+                        // fixea el delta por si es mas o menos de 360 para que no se ponga en negativo ni se pase, ni cosas raras lol
+                        float delta = *(float*)(ptr + offset) - addr.Value;
+                        if (delta > 180) { delta -= 360; }
+                        else if (delta < -180) { delta += 360; }
+
+                        // ahora si, si el pointer no existe lo agrega y le pone el delta. si existe solo le pone el delta y ya
+                        if (history.ContainsKey(addr.Key)) { history[addr.Key].Add(delta); }
+                    }
+                }
+            }
+            return history.Count;
         }
 
         /////////////////////////////////// READ & WRITE //////////////////////////////////////
