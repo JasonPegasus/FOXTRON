@@ -14,6 +14,7 @@ namespace FX_Core
         public static void Log(string text, LogType type = LogType.Info)
         { Console.WriteLine($"[{DateTime.Now}] [{type.ToString().ToUpper()}] {text}"); }
 
+        public static string PtrStr(IntPtr ptr) { return "0x" + ptr.ToString("X"); }
 
         public static int FilterPointerDictionary(ref Dictionary<IntPtr, float> dictionary, Predicate<float> filter)
         {

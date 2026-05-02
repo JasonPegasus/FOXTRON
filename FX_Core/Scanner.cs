@@ -109,32 +109,27 @@ namespace FX_Core
         public List<IntPtr> GetFinalPointerByWrite(Dictionary<IntPtr, float> pointers)
         {
             List<IntPtr> possiblePtrs = new List<IntPtr>();
-            foreach (var group in pointers.GroupBy(e => e.Value))
+            foreach (IntPtr ptr in pointers.Keys)
             {
-                foreach (var ptr in group)
+                float ogValue = MEM.ReadFloat(ptr);
+                InputSimulator.MoveMouseRepeat(5, 0, 5, 10);
+                Thread.Sleep(10);
+
+                if (MEM.ReadFloat(ptr) == ogValue)
                 {
-                    IntPtr addr = ptr.Key;
-                    float ogValue = MEM.ReadFloat(addr);
-                    float newValue = MEM.DoFloat(addr, v => v + 50);
-                    Console.WriteLine($"0x{addr.ToString("X")}: {ogValue} -> {newValue}");
-                    Thread.Sleep(500);
-
-                    bool doContinue = false;
-                    foreach (var subptr in group)
-                    {
-                        if (MEM.ReadFloat(subptr.Key) != newValue)
-                        {
-                            Console.WriteLine($"0x{subptr.Key.ToString("X")} not equal | 0x{ptr.Key.ToString("X")} was not parent");
-                            doContinue = true;
-                            break;
-                        }
-                    }
-                    if (doContinue) continue;
-
-                    Console.WriteLine($"0x{ptr.Key.ToString("X")} IS A PARENT!1!1");
-                    if (!possiblePtrs.Contains(ptr.Key)) { possiblePtrs.Add(ptr.Key); }
-                    Thread.Sleep(2000);
+                    Shared.Log($"{Shared.PtrStr(ptr)} got reset or did not change");
+                    continue;
                 }
+
+                MEM.WriteFloat(ptr, ogValue);
+                Thread.Sleep(100);
+
+                if (MEM.ReadFloat(ptr) == ogValue) 
+                {
+                    possiblePtrs.Add(ptr);
+                    Shared.Log($"{Shared.PtrStr(ptr)} WAS FINE!!!");
+                }
+                else { Shared.Log($"{Shared.PtrStr(ptr)} discarded"); }
             }
             return possiblePtrs;
         }
@@ -160,7 +155,7 @@ namespace FX_Core
             foreach (IntPtr pointer in finalPointers) { Shared.Log($"possible?: 0x{pointer.ToString("X")}"); }
             Shared.Log("Final Count: " + finalPointers.Count);
 
-            //Shared.Log($"The final pointer is: 0x{finalPointer.ToString("X")}");
+
 
             ProcessManager.SetFoxtronHighPriority(false);
             return IntPtr.Zero;

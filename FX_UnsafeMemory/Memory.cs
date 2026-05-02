@@ -202,39 +202,6 @@ namespace FX_UnsafeMemory
             return history.Count;
         }
 
-        public List<IntPtr> GetFinalPointerByWrite(Dictionary<IntPtr, float> pointers)
-        {
-            List<IntPtr> possiblePtrs = new List<IntPtr>();
-            foreach (var group in pointers.GroupBy(e => e.Value))
-            {
-                foreach (var ptr in group)
-                {
-                    IntPtr addr = ptr.Key;
-                    float ogValue = ReadFloat(addr);
-                    float newValue = DoFloat(addr, v => v + 50);
-                    Console.WriteLine($"0x{addr.ToString("X")}: {ogValue} -> {newValue}");
-                    Thread.Sleep(500);
-
-                    bool doContinue = false;
-                    foreach (var subptr in group)
-                    {
-                        if (ReadFloat(subptr.Key) != newValue)
-                        {
-                            Console.WriteLine($"0x{subptr.Key.ToString("X")} not equal | 0x{ptr.Key.ToString("X")} was not parent");
-                            doContinue = true;
-                            break;
-                        }
-                    }
-                    if (doContinue) continue;
-
-                    Console.WriteLine($"0x{ptr.Key.ToString("X")} IS A PARENT!1!1");
-                    if (!possiblePtrs.Contains(ptr.Key)) { possiblePtrs.Add(ptr.Key); }
-                    Thread.Sleep(2000);
-                }
-            }
-            return possiblePtrs;
-        }
-
         /////////////////////////////////// READ & WRITE //////////////////////////////////////
 
         public unsafe float ReadFloat(IntPtr address)
