@@ -46,5 +46,32 @@ namespace FX_Core
 
             SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
         }
+
+
+        public static void MoveMouseRepeat(int dx, int dy, int rep, int sleep = 100)
+        {
+            INPUT input = new INPUT
+            {
+                type = INPUT_MOUSE,
+                U = new InputUnion
+                {
+                    mi = new MOUSEINPUT
+                    {
+                        dx = dx,
+                        dy = dy,
+                        mouseData = 0,
+                        dwFlags = MOUSEEVENTF_MOVE,
+                        time = 0,
+                        dwExtraInfo = IntPtr.Zero
+                    }
+                }
+            };
+
+            for (int i = 0; i < rep; i++)
+            {
+                SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
+                Thread.Sleep(sleep);
+            }
+        }
     }
 }

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using static FX_UnsafeMemory.Memory;
 
@@ -14,13 +17,17 @@ namespace FX_UnsafeMemory
     public class Memory
     {
         ////////////////////////////////////// KERNEL IMPORTS //////////////////////////////////////
-        ///
+
         [DllImport("kernel32.dll")] static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
-        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
-        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
+
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory (IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory (IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
+
+        [DllImport("kernel32.dll")] static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesWritten);
+        [DllImport("kernel32.dll")] static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
 
         ////////////////////////////////////// PROCESS AND ACCESSES //////////////////////////////////////
-        ///
+
         Process _proc;
 
         public Memory(Process proc) { this._proc = proc; }
@@ -30,6 +37,9 @@ namespace FX_UnsafeMemory
         public Process getProcess() { return _proc; }
 
         ////////////////////////////////////// SCANNING AND SEARCHING ///////////////////////////////////////
+
+        public IntPtr temp_CamAddress = 0x6B812B48;
+
 
         public struct DATA { IntPtr ptr; float value; }
 
@@ -71,7 +81,7 @@ namespace FX_UnsafeMemory
                                     {
                                         results.Add((IntPtr)(baseAddr + offset + i), value);
                                     }
-                                    else if ((baseAddr + offset + i) == (IntPtr)0x6B832B48)
+                                    else if ((baseAddr + offset + i) == temp_CamAddress)
                                     {
                                         return new Dictionary<IntPtr, float>();
                                     }
@@ -110,11 +120,11 @@ namespace FX_UnsafeMemory
                         // en resumen, el (float*) castea el (ptr + offset) para que sea un puntero, y el * del inicio (*(float*)...)
                         // como que lo convierte para que sea directamente el valor otra vez, ya que *ptr es igual a el valor del pointer
                         float value = *(float*)(ptr + offset);
-                        if (filter(value)) 
+                        if (filter(value))
                         {
                             result[addr.Key] = value;
                         }
-                        else if (addr.Key == (IntPtr)0x6B832B48)
+                        else if (addr.Key == (IntPtr)temp_CamAddress)
                         {
                             return 1111111111;
                         }
@@ -144,16 +154,14 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.Key.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue;
 
-                        // en resumen, el (float*) castea el (ptr + offset) para que sea un puntero, y el * del inicio (*(float*)...)
-                        // como que lo convierte para que sea directamente el valor otra vez, ya que *ptr es igual a el valor del pointer
                         float newValue = *(float*)(ptr + offset);
                         if (filter(addr.Value, newValue)) 
                         {
                             result.Add(addr.Key, newValue);
                         }
-                        else if (addr.Key == (IntPtr)0x6B832B48)
+                        else if (addr.Key == (IntPtr)temp_CamAddress)
                         {
                             return 333333333;
                         }
@@ -179,7 +187,7 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.Key.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
+                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue;
 
                         // fixea el delta por si es mas o menos de 360 para que no se ponga en negativo ni se pase, ni cosas raras lol
                         float delta = *(float*)(ptr + offset) - addr.Value;
@@ -194,14 +202,40 @@ namespace FX_UnsafeMemory
             return history.Count;
         }
 
-        /////////////////////////////////// READ & WRITE //////////////////////////////////////
-
-        public byte[] ReadBytes(IntPtr ptr, int bytes)
+        public List<IntPtr> GetFinalPointerByWrite(Dictionary<IntPtr, float> pointers)
         {
-            byte[] buffer = new byte[bytes];
-            ReadProcessMemory(_proc.Handle, ptr, buffer, bytes, out _);
-            return buffer;
+            List<IntPtr> possiblePtrs = new List<IntPtr>();
+            foreach (var group in pointers.GroupBy(e => e.Value))
+            {
+                foreach (var ptr in group)
+                {
+                    IntPtr addr = ptr.Key;
+                    float ogValue = ReadFloat(addr);
+                    float newValue = DoFloat(addr, v => v + 50);
+                    Console.WriteLine($"0x{addr.ToString("X")}: {ogValue} -> {newValue}");
+                    Thread.Sleep(500);
+
+                    bool doContinue = false;
+                    foreach (var subptr in group)
+                    {
+                        if (ReadFloat(subptr.Key) != newValue)
+                        {
+                            Console.WriteLine($"0x{subptr.Key.ToString("X")} not equal | 0x{ptr.Key.ToString("X")} was not parent");
+                            doContinue = true;
+                            break;
+                        }
+                    }
+                    if (doContinue) continue;
+
+                    Console.WriteLine($"0x{ptr.Key.ToString("X")} IS A PARENT!1!1");
+                    if (!possiblePtrs.Contains(ptr.Key)) { possiblePtrs.Add(ptr.Key); }
+                    Thread.Sleep(2000);
+                }
+            }
+            return possiblePtrs;
         }
+
+        /////////////////////////////////// READ & WRITE //////////////////////////////////////
 
         public unsafe float ReadFloat(IntPtr address)
         {
@@ -210,11 +244,34 @@ namespace FX_UnsafeMemory
             ReadProcessMemory(_proc.Handle, address, buffer, 4, out _);
 
             fixed (byte* ptr = buffer)
-            {
-                return *(float*)ptr;
-            }
+            { return *(float*)ptr; }
         }
 
+        public unsafe bool WriteFloat(IntPtr address, float value)
+        {
+            byte[] buffer = new byte[4];
+
+            fixed (byte* ptr = buffer)
+            { *(float*)ptr = value; }
+
+            return WriteProcessMemory(_proc.Handle, address, buffer, 4, out _);
+        }
+
+        public unsafe float DoFloat(IntPtr address, Func<float, float> f)
+        {
+            byte[] buffer = new byte[4];
+            ReadProcessMemory(_proc.Handle, address, buffer, 4, out _);
+
+            float done;
+            fixed (byte* ptr = buffer)
+            {
+                done = f(*(float*)ptr);
+                *(float*)ptr = done; 
+            }
+
+            WriteProcessMemory(_proc.Handle, address, buffer, 4, out _);
+            return done;
+        }
 
         ////////////////////////////////////// OTHER //////////////////////////////////////
 

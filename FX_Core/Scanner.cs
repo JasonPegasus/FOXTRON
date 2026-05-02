@@ -38,33 +38,37 @@ namespace FX_Core
             return MEM.ScanFloatFiltered(e => (e != 0 && e != 1 && Between(e, -360, 360)));
         }
 
-
-        /////////////////////////////// CURRENT SCAN DATA ///////////////////////////////
-
-        void Pause(bool p) 
+        // UNUSED //
+        void FilterBy360(ref Dictionary<IntPtr, float> pointers, int iterations)
         {
-            if (!pauseScan) { return; }
-            ProcessManager.SetPauseProcess(Process(), p); 
+            for (int i = 0; i < iterations; i++)
+            {
+                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
+                Thread.Sleep(10);
+                InputSimulator.MoveMouse(20, 0);
+                Thread.Sleep(10);
+                Pause(true);
+                Shared.Log($"Removed {MEM.FilterValues(ref pointers, v => Between(v, -360, 360))} non-360 values! ({pointers.Count} remaining...) ({i}/{iterations})");
+                Pause(false);
+            }
         }
 
-        public IntPtr FindCamera(int cleans = 20)
+        void FilterByEqual(ref Dictionary<IntPtr, float> pointers, int iterations)
         {
-            ProcessManager.SetFoxtronHighPriority(true);
-            Dictionary<IntPtr, float> pointers = Find360();
-            Shared.Log($"Found {pointers.Count} values in the initial 360º range");
-
-            //FilterBy360(pointers, 1);
-            FilterByEqual(pointers, 100);
-            FilterByProportion(pointers, 20);
-
-            //foreach(var ptr in pointers) { Shared.Log($"Ptr: 0x{ptr.Key.ToString("X")} | Value: {ptr.Value}"); }
-
-            ProcessManager.SetFoxtronHighPriority(false);
-            return IntPtr.Zero;
+            for (int i = 0; i < iterations; i++)
+            {
+                bool doMove = Shared.random.Next(2) == 0;
+                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
+                Thread.Sleep(10);
+                if (doMove) { InputSimulator.MoveMouseRepeat(1, 0, 20, 10); }
+                Thread.Sleep(doMove ? 50 : 10);
+                Pause(true);
+                Shared.Log($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) => (Between(b, -360, 360) && ((doMove) ? a != b : a == b)))} equal values! [doMove: {doMove}] ({pointers.Count} remaining...) ({i}/{iterations})");
+                Pause(false);
+            }
         }
 
-
-        void FilterByProportion(Dictionary<IntPtr, float> pointers, int iterations)
+        void FilterByProportion(ref Dictionary<IntPtr, float> pointers, int iterations)
         {
             Dictionary<IntPtr, List<float>> history = pointers.Keys.ToDictionary(k => k, k => new List<float>());
             Shared.Log("hist count: " + history.Count);
@@ -72,7 +76,7 @@ namespace FX_Core
             {
                 ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
                 Thread.Sleep(10);
-                InputSimulator.MoveMouse(20, 0);
+                InputSimulator.MoveMouseRepeat(1, 0, 50, 10);
                 Thread.Sleep(10);
 
                 MEM.GetValuesDeltas(pointers, ref history);
@@ -99,36 +103,67 @@ namespace FX_Core
             for (int i = 0; i < Math.Min(10, pointerRank.Count); i++)
             { Shared.Log($"Ptr: 0x{pointerRank[i].ToString("X")}"); }
 
-            Shared.Log("it should be in "+ pointerRank.IndexOf((IntPtr)0x6B832B48));
+            Shared.Log("it should be in " + pointerRank.IndexOf(MEM.temp_CamAddress));
         }
 
-        void FilterByEqual(Dictionary<IntPtr, float> pointers, int iterations)
+        public List<IntPtr> GetFinalPointerByWrite(Dictionary<IntPtr, float> pointers)
         {
-            for (int i = 0; i < iterations; i++)
+            List<IntPtr> possiblePtrs = new List<IntPtr>();
+            foreach (var group in pointers.GroupBy(e => e.Value))
             {
-                bool doMove = Shared.random.Next(1) == 0;
-                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
-                Thread.Sleep(10);
-                InputSimulator.MoveMouse(doMove ? 50 : 0, 0);
-                Thread.Sleep(doMove ? 10 : 100);
-                Pause(true);
-                Shared.Log($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) => (Between(a, -360, 360) && (doMove) ? a != b : a == b))} equal values! ({pointers.Count} remaining...)");
-                Pause(false);
+                foreach (var ptr in group)
+                {
+                    IntPtr addr = ptr.Key;
+                    float ogValue = MEM.ReadFloat(addr);
+                    float newValue = MEM.DoFloat(addr, v => v + 50);
+                    Console.WriteLine($"0x{addr.ToString("X")}: {ogValue} -> {newValue}");
+                    Thread.Sleep(500);
+
+                    bool doContinue = false;
+                    foreach (var subptr in group)
+                    {
+                        if (MEM.ReadFloat(subptr.Key) != newValue)
+                        {
+                            Console.WriteLine($"0x{subptr.Key.ToString("X")} not equal | 0x{ptr.Key.ToString("X")} was not parent");
+                            doContinue = true;
+                            break;
+                        }
+                    }
+                    if (doContinue) continue;
+
+                    Console.WriteLine($"0x{ptr.Key.ToString("X")} IS A PARENT!1!1");
+                    if (!possiblePtrs.Contains(ptr.Key)) { possiblePtrs.Add(ptr.Key); }
+                    Thread.Sleep(2000);
+                }
             }
+            return possiblePtrs;
         }
 
-        void FilterBy360(Dictionary<IntPtr, float> pointers, int iterations)
+        /////////////////////////////// CURRENT SCAN DATA ///////////////////////////////
+
+        void Pause(bool p) 
         {
-            for (int i = 0; i < iterations; i++)
-            {
-                ProcessManager.SetForegroundWindow(Process().MainWindowHandle);
-                Thread.Sleep(10);
-                InputSimulator.MoveMouse(20, 0);
-                Thread.Sleep(10);
-                Pause(true);
-                Shared.Log($"Removed {MEM.FilterValues(ref pointers, v => Between(v, -360, 360))} non-360 values! ({pointers.Count} remaining...)");
-                Pause(false);
-            }
+            if (!pauseScan) { return; }
+            ProcessManager.SetPauseProcess(Process(), p); 
+        }
+
+        public IntPtr FindCamera(int cleans = 20)
+        {
+            ProcessManager.SetFoxtronHighPriority(true);
+            Dictionary<IntPtr, float> pointers = Find360();
+            Shared.Log($"Found {pointers.Count} values in the initial 360º range");
+
+            FilterByEqual(ref pointers, 100);
+            FilterByProportion(ref pointers, 2);
+            List<IntPtr> finalPointers = GetFinalPointerByWrite(pointers);
+
+            foreach (IntPtr pointer in finalPointers) { Shared.Log($"possible?: 0x{pointer.ToString("X")}"); }
+            Shared.Log("Final Count: " + finalPointers.Count);
+
+            //Shared.Log($"The final pointer is: 0x{finalPointer.ToString("X")}");
+
+            ProcessManager.SetFoxtronHighPriority(false);
+            return IntPtr.Zero;
         }
     }
 }
