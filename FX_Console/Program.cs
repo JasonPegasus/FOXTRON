@@ -36,7 +36,7 @@ internal class Program
                         for (int i = 0; i < 50; i++)
                         {
                             Thread.Sleep(10);
-                            InputSimulator.MoveMouse(100, 0);
+                            InputManager.MoveMouse(100, 0);
                         }
                         break;
                     default: break;

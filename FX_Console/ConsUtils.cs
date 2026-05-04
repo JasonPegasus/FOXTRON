@@ -33,8 +33,7 @@ namespace FX_Console
             Console.ForegroundColor = oldColor;
         }
 
-        public void resetColor()
-        { Console.ForegroundColor = defaultColor; }
+        public void resetColor() { Console.ForegroundColor = defaultColor; }
 
         public static int askInt()
         {

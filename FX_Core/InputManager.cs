@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FX_Core
 {
-    public static class InputSimulator
+    public static class InputManager
     {
         [StructLayout(LayoutKind.Sequential)]
         struct MOUSEINPUT { public int dx; public int dy; public uint mouseData; public uint dwFlags; public uint time; public IntPtr dwExtraInfo; }
@@ -30,18 +30,7 @@ namespace FX_Core
             INPUT input = new INPUT
             {
                 type = INPUT_MOUSE,
-                U = new InputUnion
-                {
-                    mi = new MOUSEINPUT
-                    {
-                        dx = dx,
-                        dy = dy,
-                        mouseData = 0,
-                        dwFlags = MOUSEEVENTF_MOVE,
-                        time = 0,
-                        dwExtraInfo = IntPtr.Zero
-                    }
-                }
+                U = new InputUnion { mi = new MOUSEINPUT { dx = dx, dy = dy, mouseData = 0, dwFlags = MOUSEEVENTF_MOVE, time = 0, dwExtraInfo = IntPtr.Zero } }
             };
 
             SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
@@ -53,18 +42,7 @@ namespace FX_Core
             INPUT input = new INPUT
             {
                 type = INPUT_MOUSE,
-                U = new InputUnion
-                {
-                    mi = new MOUSEINPUT
-                    {
-                        dx = dx,
-                        dy = dy,
-                        mouseData = 0,
-                        dwFlags = MOUSEEVENTF_MOVE,
-                        time = 0,
-                        dwExtraInfo = IntPtr.Zero
-                    }
-                }
+                U = new InputUnion{ mi = new MOUSEINPUT{ dx = dx, dy = dy, mouseData = 0, dwFlags = MOUSEEVENTF_MOVE, time = 0, dwExtraInfo = IntPtr.Zero } }
             };
 
             for (int i = 0; i < rep; i++)
