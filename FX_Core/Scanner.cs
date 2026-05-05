@@ -177,36 +177,26 @@ namespace FX_Core
             ProcessManager.SetPauseProcess(Process(), p); 
         }
 
-        public IntPtr FindCamera(int cleans = 20)
+        public List<IntPtr> FindCameraX(int cleans = 200)
         {
             ProcessManager.SetFoxtronHighPriority(true);
             Dictionary<IntPtr, float> pointers = Find360();
             Shared.Log($"Found {pointers.Count} values in the initial 360º range");
 
-            FilterByEqual(ref pointers, 100);
+            FilterByEqual(ref pointers, cleans);
             FilterByWrite(ref pointers);
             FilterByCopies(ref pointers);
 
             foreach (var group in pointers.GroupBy(g => g.Value))
             {
                 foreach (var ptr in group) 
-                { 
+                {
                     Shared.Log($"POSSIBLE: [0x{ptr.Key.ToString("X")} | Value: {ptr.Value}]"); 
                 }
             }
             Shared.Log("Final Count: " + pointers.Count);
 
-
-            IntPtr fp = pointers.Keys.First(e => true);
-            float unit = MEM.ReadFloat(fp)*0.01f;
-            while (true)
-            {
-                Thread.Sleep(100);
-                MEM.DoFloat(fp, e => e+unit);
-            }
-
-            ProcessManager.SetFoxtronHighPriority(false);
-            return IntPtr.Zero;
+            return pointers.Keys.ToList();
         }
     }
 }

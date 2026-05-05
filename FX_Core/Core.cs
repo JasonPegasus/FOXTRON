@@ -8,11 +8,15 @@ namespace FX_Core
     {
         //////////////////////////// GLOBAL USAGE ////////////////////////////
 
+        //////////////////////////// OBJECT FINDING ////////////////////////////
+
+
+
         //////////////////////////// ATTACHING ////////////////////////////
+        
         public static Scanner scanner { get; private set; }
 
         public static Scanner Attach(string processName) { return Attach(Process.GetProcessesByName(processName)[0]); }
-
         public static Scanner Attach(Process process)
         {
             if (isAttached() || process == null)

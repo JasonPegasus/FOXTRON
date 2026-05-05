@@ -30,15 +30,7 @@ internal class Program
                     case "attach to": tryAttach(Console.ReadLine()); break;
                     case "detach": tryDetach(); break;
                     case "find": findCommand(); break;
-                    case "move":
-                        ConsUtils.print("suc?: "+ ProcessManager.SetForegroundWindow(Core.scanner.Process().MainWindowHandle), ConsUtils.userError);
-                        ConsUtils.print(Core.scanner.Process().ProcessName);
-                        for (int i = 0; i < 50; i++)
-                        {
-                            Thread.Sleep(10);
-                            InputManager.MoveMouse(100, 0);
-                        }
-                        break;
+                    case "fly": flyCommand(); break;
                     default: break;
                 }
             }
@@ -46,10 +38,15 @@ internal class Program
         }
     }
 
+    static void flyCommand()
+    {
+        
+    }
+
     static void findCommand()
     {
         ConsUtils.print("Attemping to find camera...", ConsUtils.titleColor);
-        Core.scanner.FindCamera();
+
     }
 
     static void help()
