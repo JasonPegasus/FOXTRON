@@ -23,6 +23,9 @@ namespace FX_Core
             MEM = new Memory(process); 
         }
 
+        public float GetFloat(IntPtr ptr) { return MEM.ReadFloat(ptr); }
+        public void SetFloat(IntPtr ptr, float value) { MEM.WriteFloat(ptr, value); }
+
         public bool isProcessValid() { return MEM != null && MEM.isProcessValid(); }
         
         public Process Process() { return MEM.getProcess(); }

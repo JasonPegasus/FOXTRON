@@ -10,7 +10,12 @@ namespace FX_Core
 
         //////////////////////////// OBJECT FINDING ////////////////////////////
 
+        static Player plr;
 
+        public static void MakePlayer()
+        {
+            plr = new Player(scanner);
+        }
 
         //////////////////////////// ATTACHING ////////////////////////////
         

@@ -46,7 +46,7 @@ internal class Program
     static void findCommand()
     {
         ConsUtils.print("Attemping to find camera...", ConsUtils.titleColor);
-
+        Core.MakePlayer();
     }
 
     static void help()

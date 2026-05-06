@@ -9,6 +9,17 @@ namespace FX_Core
 {
     public static class InputManager
     {
+        [DllImport("user32.dll")]
+        static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+
+        // KEYBOARD //
+        [DllImport("user32.dll")]
+        static extern short GetAsyncKeyState(int vKey);
+
+        public static bool IsKeyDown(ConsoleKey key) { return (GetAsyncKeyState((int)key) & 0x8000) != 0; }
+
+        // MOUSE //
+
         [StructLayout(LayoutKind.Sequential)]
         struct MOUSEINPUT { public int dx; public int dy; public uint mouseData; public uint dwFlags; public uint time; public IntPtr dwExtraInfo; }
 
@@ -22,8 +33,6 @@ namespace FX_Core
         const uint MOUSEEVENTF_MOVE = 0x0001;
         const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
 
-        [DllImport("user32.dll")]
-        static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
         public static void MoveMouse(int dx, int dy)
         {
@@ -51,5 +60,7 @@ namespace FX_Core
                 Thread.Sleep(sleep);
             }
         }
+
+
     }
 }
