@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace FX_Core
 {
-    internal class Player
+    internal class Player : DummyObject
     {
-        Scanner scanner;
         public Player(Scanner scann) 
         {
             scanner = scann; 
@@ -20,6 +19,7 @@ namespace FX_Core
         public void SetValues()
         {
             ptr_camX = scanner.FindCameraX()[0];
+            ptr_camX = scanner.FindPlayerForward()[0];
         }
 
         // VALUES //
@@ -38,7 +38,7 @@ namespace FX_Core
         {
             if (!EnableInput) return;
             int delta = (InputManager.IsKeyDown(ConsoleKey.I) ? 1 : 0) + (InputManager.IsKeyDown(ConsoleKey.O) ? -1 : 0);
-            camX += 10*delta;
+            if (delta != 0) { camX += 10 * delta; }
         }
     }
 }

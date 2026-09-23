@@ -8,13 +8,21 @@ using System.Runtime.CompilerServices;
 
 internal class Program
 {
+    static IUserInteractions interactions = new IConsoleInteractions();
+    static Core core = new(interactions);
+
     private static void Main(string[] args)
+    {
+        WelcomeText();
+        awaitCommand();
+    }
+
+    static void WelcomeText()
     {
         ConsUtils.print("[ F O X T R O N ]", ConsoleColor.DarkRed);
         ConsUtils.empty();
         ConsUtils.print("Welcome to the console application for FOXTRON.", ConsUtils.titleColor);
         ConsUtils.print("You can always type 'help' to get some useful info.", ConsUtils.subtitleColor);
-        awaitCommand();
     }
 
     static void awaitCommand()
@@ -46,7 +54,7 @@ internal class Program
     static void findCommand()
     {
         ConsUtils.print("Attemping to find camera...", ConsUtils.titleColor);
-        Core.MakePlayer();
+        core.MakePlayer();
     }
 
     static void help()
@@ -57,14 +65,14 @@ internal class Program
 
     static void tryAttach(string name = "")
     {
-        if (Core.isAttached()) 
+        if (core.isAttached()) 
         { ConsUtils.print("A process is already attached! Try typing 'Detach' before attaching something else", ConsUtils.userError); return; }
 
         try
         {
             Process proc;
-            if (name == "") { proc = Core.Attach(processSelection()).Process(); }
-            else { proc = Core.Attach(name).Process(); }
+            if (name == "") { proc = core.Attach(processSelection()); }
+            else { proc = core.Attach(name); }
             ConsUtils.print("Succesfully Attached!", ConsUtils.successColor);
             ConsUtils.print($"   {proc.ProcessName} ({proc.Id})", ConsUtils.successSubColor);
         }
@@ -74,7 +82,7 @@ internal class Program
 
     static void tryDetach()
     {
-        if (Core.Detach())
+        if (core.Detach())
         {
             ConsUtils.print("Succesfully Detached!", ConsUtils.successColor);
         }

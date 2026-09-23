@@ -1,57 +1,62 @@
 ﻿using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
+using FX_Core.Scanners;
 
 namespace FX_Core
 {
-    public static class Core
+    public class Core
     {
         //////////////////////////// GLOBAL USAGE ////////////////////////////
 
+        private readonly IUserInteractions userInteraction;
+
+        public Core(IUserInteractions interaction)
+        {
+            userInteraction = interaction;
+        }
+
         //////////////////////////// OBJECT FINDING ////////////////////////////
 
-        static Player plr;
-
-        public static void MakePlayer()
+        public void MakePlayer()
         {
-            plr = new Player(scanner);
+            DObjectManager.ScanPlayerData();
         }
 
         //////////////////////////// ATTACHING ////////////////////////////
-        
-        public static Scanner scanner { get; private set; }
 
-        public static Scanner Attach(string processName) { return Attach(Process.GetProcessesByName(processName)[0]); }
-        public static Scanner Attach(Process process)
+        internal AttachedProcess CURRENT_PROCESS { get; private set; }
+
+        public Process Attach(string processName) { return Attach(Process.GetProcessesByName(processName)[0]); }
+        public  Process Attach(Process process)
         {
-            if (isAttached() || process == null)
-            { throw new Exception("- Error on Core.Attach():\r\n" + "Process was already attached!"); }
+            if (isAttached() || process is null)
+            { throw new Exception("- Error on Core.Attach():\r\n" + "Process was already attached!... Or was null..."); }
 
             try
             {
-                scanner = new Scanner(process);
-                return scanner;
+                CURRENT_PROCESS = new(process);
+                return process;
             }
-            catch (Exception e)
-            { throw new Exception("- Error on Core.Attach():\r\n" + e.Message); }
+            catch (Exception e) { throw new Exception("- Error on Core.Attach():\r\n" + e.Message); }
         }
 
-        public static bool Detach()
+        public bool Detach()
         {
-            if (scanner == null) { return false; }
-            scanner = null; return true;
+            if (CURRENT_PROCESS is null) { return false; }
+            CURRENT_PROCESS = null; return true;
         }
 
-        public static void UpdateAttach()
+        public void UpdateAttach()
         {
-            if (scanner != null && !scanner.isProcessValid()) 
+            if (CURRENT_PROCESS is not null && !CURRENT_PROCESS.isProcessValid()) 
             { Detach(); }
         }
 
-        public static bool isAttached()
+        public bool isAttached()
         {
             UpdateAttach();
-            return scanner != null;
+            return CURRENT_PROCESS is not null;
         }
     }
 }
