@@ -4,8 +4,8 @@ namespace FX_Forms
 {
     internal static class Program
     {
-        static Core core = new Core();
-        
+        public static readonly string PRODUCT_NAME = "FOXTRON";
+
         [STAThread]
         static void Main()
         {

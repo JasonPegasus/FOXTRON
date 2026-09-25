@@ -16,7 +16,6 @@ namespace FX_Core
     public static class ProcessManager
     {
         [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
-
         [DllImport("ntdll.dll")] static extern int NtSuspendProcess(IntPtr processHandle);
         [DllImport("ntdll.dll")] static extern int NtResumeProcess(IntPtr processHandle);
 
@@ -27,7 +26,7 @@ namespace FX_Core
             NtResumeProcess(process.Handle);
         }
 
-        public static void SetFoxtronHighPriority(bool high)
+        public static void SetFoxtronPriority(bool high)
         { Process.GetCurrentProcess().PriorityClass = (high ? ProcessPriorityClass.High : ProcessPriorityClass.Normal); }
 
         public static Process[] getUserProcesses()
@@ -36,5 +35,13 @@ namespace FX_Core
         public static bool isUserProcess(Process process)
         { return !(process.SessionId == 0); }
 
+        public static bool isProcessValid(Process process)
+        { return process is not null && !process.HasExited; }
+
+        public static Process? TryGetProcessByID(int PID)
+        {
+            try { return Process.GetProcessById(PID); }
+            catch { return null; }
+        }
     }
 }

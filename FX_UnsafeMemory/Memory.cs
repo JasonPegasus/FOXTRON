@@ -81,6 +81,7 @@ namespace FX_UnsafeMemory
                                     {
                                         results.Add((IntPtr)(baseAddr + offset + i), value);
                                     }
+                                    //////////////// DEBUG LINES BELOW ////////////////
                                     else if (temp_CamAddress != null && (baseAddr + offset + i) == temp_CamAddress)
                                     {
                                         return new Dictionary<IntPtr, float>();
@@ -90,7 +91,6 @@ namespace FX_UnsafeMemory
                         }
                     }
                 }
-
                 address = new IntPtr(m.BaseAddress.ToInt64() + (long)m.RegionSize);
             }
 
@@ -124,6 +124,7 @@ namespace FX_UnsafeMemory
                         {
                             result[addr.Key] = value;
                         }
+                        //////////////// DEBUG LINES BELOW ////////////////
                         else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
                         {
                             return 1111111111;
@@ -161,6 +162,7 @@ namespace FX_UnsafeMemory
                         {
                             result.Add(addr.Key, newValue);
                         }
+                        //////////////// DEBUG LINES BELOW ////////////////
                         else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
                         {
                             return 333333333;
