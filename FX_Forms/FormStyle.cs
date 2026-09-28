@@ -21,8 +21,18 @@ namespace FX_Forms
             typeof(Form).GetProperty("ResizeRedraw", BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty | BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(form, true);
             typeof(Form).GetProperty("DoubleBuffered", BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty | BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(form, true);
             ApplyStyle();
+            OnWindowStyleChanged += doOnWindowStyleChanged;
+            bForm.Disposed += (_, _) => Dispose();
+        }
 
-            OnWindowStyleChanged += (WindowStyle ws) => { SetWindowAccent(ws); };
+        protected void doOnWindowStyleChanged(WindowStyle ws)
+        {
+            SetWindowAccent(ws);
+        }
+
+        protected void Dispose()
+        {
+            OnWindowStyleChanged -= doOnWindowStyleChanged;
         }
 
         protected abstract void ApplyStyle();
@@ -119,6 +129,8 @@ namespace FX_Forms
         protected void SetWindowAccent(WindowStyle accentState) { SetWindowAccent(accentState, Color.Black); }
         protected void SetWindowAccent(WindowStyle accentState, Color color)
         {
+            if (bForm.Disposing || bForm is null || bForm.IsDisposed) return;
+
             nint hwnd = bForm.Handle;
             AccentPolicy accent = new()
             {

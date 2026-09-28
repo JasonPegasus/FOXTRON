@@ -25,9 +25,10 @@ namespace FX_Forms.Forms
             CM_WindowStyle.Items.AddRange(windowStyleList.Keys.ToArray());
             CM_WindowStyle.SelectedIndexChanged += (_, _) => OnWindowStyleSelected();
             CM_WindowStyle.SelectedIndex = 0;
+            this.Shown += (_,_) => this.Close();
         }
-
         void OnWindowStyleSelected()
+
         {
             FormStyle.CurrentWindowStyle = windowStyleList[CM_WindowStyle.SelectedItem.ToString()];
         }

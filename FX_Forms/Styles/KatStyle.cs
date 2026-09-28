@@ -22,15 +22,15 @@ namespace FX_Forms.Styles
             SetupIndividualControls();
         }
 
-        public Color bgBaseColor = Color.FromArgb(64, 64, 64);
-        public Color bgGradientColor = Color.FromArgb(48, 48, 48);
+        static public Color bgBaseColor = Color.FromArgb(64, 64, 64);
+        static public Color bgGradientColor = Color.FromArgb(48, 48, 48);
 
-        public Color borderBaseColor = Color.FromArgb(64, 64, 64);
-        public Color borderGradientColor = Color.FromArgb(96, 96, 96);
+        static public Color borderBaseColor = Color.FromArgb(64, 64, 64);
+        static public Color borderGradientColor = Color.FromArgb(96, 96, 96);
 
-        int borderSize = 4;
+        static int borderSize = 4;
 
-        Font font = new Font("Consolas", 8);
+        static Font font = new Font("Consolas", 8);
 
         void OnPaint(object? sender, PaintEventArgs e)
         {

@@ -1,4 +1,6 @@
-﻿namespace FX_Forms.Forms
+﻿using FX_Forms.Styles;
+
+namespace FX_Forms.Forms
 {
     partial class F_ProcessSelector
     {
@@ -28,7 +30,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DG_ProcessList = new DataGridView();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DG_ProcessList = new KatDataGridView();
             P_Img = new DataGridViewImageColumn();
             P_ID = new DataGridViewTextBoxColumn();
             P_Name = new DataGridViewTextBoxColumn();
@@ -42,9 +46,25 @@
             // 
             DG_ProcessList.AllowUserToAddRows = false;
             DG_ProcessList.AllowUserToDeleteRows = false;
+            DG_ProcessList.AllowUserToResizeRows = false;
             DG_ProcessList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            DG_ProcessList.BackgroundColor = Color.FromArgb(48, 48, 48);
+            DG_ProcessList.BorderStyle = BorderStyle.None;
+            DG_ProcessList.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            DG_ProcessList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             DG_ProcessList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DG_ProcessList.Columns.AddRange(new DataGridViewColumn[] { P_Img, P_ID, P_Name, P_Path });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            DG_ProcessList.DefaultCellStyle = dataGridViewCellStyle2;
+            DG_ProcessList.EnableHeadersVisualStyles = false;
             DG_ProcessList.Location = new Point(12, 12);
             DG_ProcessList.MultiSelect = false;
             DG_ProcessList.Name = "DG_ProcessList";
@@ -119,13 +139,12 @@
         }
 
         #endregion
-
-        private DataGridView DG_ProcessList;
         private Button BT_Cancel;
         private Button BT_Select;
         private DataGridViewImageColumn P_Img;
         private DataGridViewTextBoxColumn P_ID;
         private DataGridViewTextBoxColumn P_Name;
         private DataGridViewTextBoxColumn P_Path;
+        private KatDataGridView DG_ProcessList;
     }
 }
