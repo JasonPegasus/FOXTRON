@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FX_Core;
+using FX_Forms.Styles;
 
 namespace FX_Forms.Forms
 {
@@ -19,11 +20,12 @@ namespace FX_Forms.Forms
         public F_ProcessSelector(string windowTitle)
         {
             InitializeComponent();
+            FormStyle.SetStyle<KatStyle>(this);
             this.Text = (windowTitle is null) ? "Process Selection" : windowTitle;
             FillProcessList();
             BT_Cancel.Click += (_, _) => CancelSelect();
             BT_Select.Click += (_, _) => FinishSelect();
-            DG_ProcessList.CellDoubleClick += (_, _) => FinishSelect();
+            DG_ProcessList.CellContentDoubleClick += (_, _) => FinishSelect();
         }
 
         void FillProcessList()
@@ -32,7 +34,8 @@ namespace FX_Forms.Forms
             Process[] pList = ProcessManager.getUserProcesses();
             foreach (Process proc in pList) 
             {
-                if (proc.HasExited) continue;
+                try { if (proc.HasExited) continue; }
+                catch { continue; }
 
                 string? filePath = null;
                 try { filePath = proc.MainModule.FileName; } catch(Exception ex) { }

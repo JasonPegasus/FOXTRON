@@ -21,6 +21,7 @@ namespace FX_Core
 
         public static void SetPauseProcess(Process process, bool Pause)
         {
+            return; // TEMPORAL
             if (Pause) 
             { NtSuspendProcess(process.Handle); return; }
             NtResumeProcess(process.Handle);

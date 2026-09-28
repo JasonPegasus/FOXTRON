@@ -51,7 +51,7 @@
             DG_ProcessList.ReadOnly = true;
             DG_ProcessList.RowHeadersVisible = false;
             DG_ProcessList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DG_ProcessList.Size = new Size(309, 543);
+            DG_ProcessList.Size = new Size(254, 543);
             DG_ProcessList.TabIndex = 0;
             // 
             // P_Img
@@ -89,7 +89,7 @@
             BT_Cancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             BT_Cancel.Location = new Point(12, 561);
             BT_Cancel.Name = "BT_Cancel";
-            BT_Cancel.Size = new Size(175, 27);
+            BT_Cancel.Size = new Size(125, 27);
             BT_Cancel.TabIndex = 2;
             BT_Cancel.Text = "Cancel";
             BT_Cancel.UseVisualStyleBackColor = true;
@@ -97,7 +97,7 @@
             // BT_Select
             // 
             BT_Select.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            BT_Select.Location = new Point(196, 561);
+            BT_Select.Location = new Point(141, 561);
             BT_Select.Name = "BT_Select";
             BT_Select.Size = new Size(125, 27);
             BT_Select.TabIndex = 1;
@@ -108,7 +108,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(333, 600);
+            ClientSize = new Size(278, 600);
             Controls.Add(BT_Cancel);
             Controls.Add(BT_Select);
             Controls.Add(DG_ProcessList);

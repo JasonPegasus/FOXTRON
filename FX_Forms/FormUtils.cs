@@ -13,11 +13,10 @@ namespace FX_Forms
     {
         internal static Process? OpenProcessSelectionDialog(string title = null)
         {
-            using (F_ProcessSelector fSelect = new(title))
-            {
-                DialogResult result = fSelect.ShowDialog();
-                return (result == DialogResult.OK) ? ProcessManager.TryGetProcessByID(fSelect.ReturnPID) : null;
-            }
+            F_ProcessSelector fSelect = new(title);
+            Process? sProc = (fSelect.ShowDialog() == DialogResult.OK) ? ProcessManager.TryGetProcessByID(fSelect.ReturnPID) : null;
+            fSelect.Dispose();
+            return sProc;
         }
     }
 }

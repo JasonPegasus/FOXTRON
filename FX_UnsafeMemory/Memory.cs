@@ -16,12 +16,10 @@ namespace FX_UnsafeMemory
 {
     public class Memory
     {
-        ////////////////////////////////////// KERNEL IMPORTS //////////////////////////////////////
-
         [DllImport("kernel32.dll")] static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
 
-        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory (IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
-        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory (IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+        [DllImport("kernel32.dll")] static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
 
         [DllImport("kernel32.dll")] static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesWritten);
         [DllImport("kernel32.dll")] static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize);
@@ -30,11 +28,11 @@ namespace FX_UnsafeMemory
 
         Process _proc;
 
-        public Memory(Process proc) { this._proc = proc; }
+        public Memory(Process process) { _proc = process; }
 
         public bool isProcessValid() { return _proc != null && !_proc.HasExited; }
 
-        public Process getProcess() { return _proc; }
+        public int MEMORY_CHUNK_SIZE = 0x10000;
 
         ////////////////////////////////////// SCANNING AND SEARCHING ///////////////////////////////////////
 
@@ -49,12 +47,9 @@ namespace FX_UnsafeMemory
 
             IntPtr address = IntPtr.Zero;
 
-            const int chunkSize = 0x10000;
-
             while (true)
             {
                 MEMORY_BASIC_INFORMATION m;
-
                 if (VirtualQueryEx(_proc.Handle, address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))) == 0)
                     break;
 
@@ -63,9 +58,9 @@ namespace FX_UnsafeMemory
                     long baseAddr = m.BaseAddress.ToInt64();
                     long regionSize = (long)m.RegionSize;
 
-                    for (long offset = 0; offset < regionSize; offset += chunkSize)
+                    for (long offset = 0; offset < regionSize; offset += MEMORY_CHUNK_SIZE)
                     {
-                        int toRead = (int)Math.Min(chunkSize, regionSize - offset);
+                        int toRead = (int)Math.Min(MEMORY_CHUNK_SIZE, regionSize - offset);
 
                         byte[] buffer = new byte[toRead];
 
@@ -81,33 +76,33 @@ namespace FX_UnsafeMemory
                                     {
                                         results.Add((IntPtr)(baseAddr + offset + i), value);
                                     }
-                                    //////////////// DEBUG LINES BELOW ////////////////
-                                    else if (temp_CamAddress != null && (baseAddr + offset + i) == temp_CamAddress)
-                                    {
-                                        return new Dictionary<IntPtr, float>();
-                                    }
+                                    //else if (temp_CamAddress != null && (baseAddr + offset + i) == temp_CamAddress)
+                                    //{
+                                    //    return new Dictionary<IntPtr, float>();
+                                    //}
                                 }
                             }
                         }
                     }
                 }
+
                 address = new IntPtr(m.BaseAddress.ToInt64() + (long)m.RegionSize);
             }
 
             return results;
         }
 
-        public unsafe int FilterValues(ref Dictionary<IntPtr, float> ptrs, Predicate<float> filter, int chunkSize = 0x10000) // 4KB default
+        public unsafe int FilterValues(ref Dictionary<IntPtr, float> ptrs, Predicate<float> filter) // 4KB default
         {
             Dictionary<IntPtr, float> result = new Dictionary<IntPtr, float>();
             int ogSize = ptrs.Count;
 
-            byte[] buffer = new byte[chunkSize];
-            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            byte[] buffer = new byte[MEMORY_CHUNK_SIZE];
+            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / MEMORY_CHUNK_SIZE)) // Agrupar por bloque de memoria
             {
-                long baseAddr = group.Key * chunkSize;
+                long baseAddr = group.Key * MEMORY_CHUNK_SIZE;
 
-                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, chunkSize, out _)) continue;
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, MEMORY_CHUNK_SIZE, out _)) continue;
 
                 fixed (byte* ptr = buffer)
                 {
@@ -115,7 +110,7 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.Key.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
+                        if (offset < 0 || offset > MEMORY_CHUNK_SIZE - sizeof(float)) continue; // Seguridad, se fija que no lea cosas de más ya que lee de a 4 bytes
 
                         // en resumen, el (float*) castea el (ptr + offset) para que sea un puntero, y el * del inicio (*(float*)...)
                         // como que lo convierte para que sea directamente el valor otra vez, ya que *ptr es igual a el valor del pointer
@@ -124,11 +119,10 @@ namespace FX_UnsafeMemory
                         {
                             result[addr.Key] = value;
                         }
-                        //////////////// DEBUG LINES BELOW ////////////////
-                        else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
-                        {
-                            return 1111111111;
-                        }
+                        //else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
+                        //{
+                        //    return 1111111111;
+                        //}
                     }
                 }
             }
@@ -137,17 +131,17 @@ namespace FX_UnsafeMemory
         }
 
 
-        public unsafe int CompareFilterValues(ref Dictionary<IntPtr, float> ptrs, Func<float, float, bool> filter, int chunkSize = 0x1000) // 4KB default
+        public unsafe int CompareFilterValues(ref Dictionary<IntPtr, float> ptrs, Func<float, float, bool> filter) // 4KB default
         {
             Dictionary<IntPtr, float> result = new Dictionary<IntPtr, float>();
             int ogSize = ptrs.Count;
 
-            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / MEMORY_CHUNK_SIZE)) // Agrupar por bloque de memoria
             {
-                long baseAddr = group.Key * chunkSize;
-                byte[] buffer = new byte[chunkSize];
+                long baseAddr = group.Key * MEMORY_CHUNK_SIZE;
+                byte[] buffer = new byte[MEMORY_CHUNK_SIZE];
 
-                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, chunkSize, out _)) continue;
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, MEMORY_CHUNK_SIZE, out _)) continue;
 
                 fixed (byte* ptr = buffer)
                 {
@@ -155,18 +149,17 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.Key.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue;
+                        if (offset < 0 || offset > MEMORY_CHUNK_SIZE - sizeof(float)) continue;
 
                         float newValue = *(float*)(ptr + offset);
-                        if (filter(addr.Value, newValue)) 
+                        if (filter(addr.Value, newValue))
                         {
                             result.Add(addr.Key, newValue);
                         }
-                        //////////////// DEBUG LINES BELOW ////////////////
-                        else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
-                        {
-                            return 333333333;
-                        }
+                        //else if (temp_CamAddress != null && addr.Key == (IntPtr)temp_CamAddress)
+                        //{
+                        //    return 333333333;
+                        //}
                     }
                 }
             }
@@ -174,14 +167,14 @@ namespace FX_UnsafeMemory
             return ogSize - ptrs.Count;
         }
 
-        public unsafe int GetValuesDeltas(Dictionary<IntPtr, float> ptrs, ref Dictionary<IntPtr, List<float>> history, int chunkSize = 0x1000) // 4KB default
+        public unsafe int GetValuesDeltas(Dictionary<IntPtr, float> ptrs, ref Dictionary<IntPtr, List<float>> history) // 4KB default
         {
-            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / chunkSize)) // Agrupar por bloque de memoria
+            foreach (var group in ptrs.GroupBy(addr => addr.Key.ToInt64() / MEMORY_CHUNK_SIZE)) // Agrupar por bloque de memoria
             {
-                long baseAddr = group.Key * chunkSize;
-                byte[] buffer = new byte[chunkSize];
+                long baseAddr = group.Key * MEMORY_CHUNK_SIZE;
+                byte[] buffer = new byte[MEMORY_CHUNK_SIZE];
 
-                if (!ReadProcessMemory(_proc.Handle, (IntPtr) baseAddr, buffer, chunkSize, out _)) continue;
+                if (!ReadProcessMemory(_proc.Handle, (IntPtr)baseAddr, buffer, MEMORY_CHUNK_SIZE, out _)) continue;
 
                 fixed (byte* ptr = buffer)
                 {
@@ -189,7 +182,7 @@ namespace FX_UnsafeMemory
                     {
                         int offset = (int)(addr.Key.ToInt64() - baseAddr);
 
-                        if (offset < 0 || offset > chunkSize - sizeof(float)) continue;
+                        if (offset < 0 || offset > MEMORY_CHUNK_SIZE - sizeof(float)) continue;
 
                         // fixea el delta por si es mas o menos de 360 para que no se ponga en negativo ni se pase, ni cosas raras lol
                         float delta = *(float*)(ptr + offset) - addr.Value;
@@ -235,7 +228,7 @@ namespace FX_UnsafeMemory
             fixed (byte* ptr = buffer)
             {
                 done = f(*(float*)ptr);
-                *(float*)ptr = done; 
+                *(float*)ptr = done;
             }
 
             WriteProcessMemory(_proc.Handle, address, buffer, 4, out _);
@@ -256,3 +249,4 @@ namespace FX_UnsafeMemory
         }
     }
 }
+

@@ -30,11 +30,12 @@
         {
             CH_AutoScroll = new CheckBox();
             RTB_Console = new RichTextBox();
+            CH_FollowMain = new CheckBox();
             SuspendLayout();
             // 
             // CH_AutoScroll
             // 
-            CH_AutoScroll.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            CH_AutoScroll.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             CH_AutoScroll.AutoSize = true;
             CH_AutoScroll.Checked = true;
             CH_AutoScroll.CheckState = CheckState.Checked;
@@ -59,12 +60,28 @@
             RTB_Console.TabIndex = 3;
             RTB_Console.Text = "";
             // 
+            // CH_FollowMain
+            // 
+            CH_FollowMain.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            CH_FollowMain.AutoSize = true;
+            CH_FollowMain.Checked = true;
+            CH_FollowMain.CheckState = CheckState.Checked;
+            CH_FollowMain.ForeColor = Color.White;
+            CH_FollowMain.Location = new Point(11, 499);
+            CH_FollowMain.Margin = new Padding(2);
+            CH_FollowMain.Name = "CH_FollowMain";
+            CH_FollowMain.Size = new Size(138, 19);
+            CH_FollowMain.TabIndex = 5;
+            CH_FollowMain.Text = "Follow Main Window";
+            CH_FollowMain.UseVisualStyleBackColor = true;
+            // 
             // F_Logs
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             ClientSize = new Size(412, 529);
+            Controls.Add(CH_FollowMain);
             Controls.Add(CH_AutoScroll);
             Controls.Add(RTB_Console);
             Name = "F_Logs";
@@ -77,5 +94,6 @@
 
         private CheckBox CH_AutoScroll;
         private RichTextBox RTB_Console;
+        private CheckBox CH_FollowMain;
     }
 }
