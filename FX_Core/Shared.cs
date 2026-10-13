@@ -30,7 +30,7 @@ namespace FX_Core
             OnPrint?.Invoke(fullLog, pType);
         }
 
-        public enum PrintType { Log, Warn, Error, Exception, Success }
+        public enum PrintType { Log, Warn, Error, Exception, Success, Info }
 
         public static readonly Dictionary<PrintType, Color> PrintTypeColors = new()
         {
@@ -39,6 +39,7 @@ namespace FX_Core
             { PrintType.Error, Color.FromArgb(250, 100, 100) },
             { PrintType.Exception, Color.FromArgb(200, 0, 200) },
             { PrintType.Success, Color.LightGreen },
+            { PrintType.Info, Color.Cyan },
         };
     }
 }

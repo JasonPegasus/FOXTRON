@@ -25,10 +25,7 @@ namespace FX_Forms
             bForm.Disposed += (_, _) => Dispose();
         }
 
-        protected void doOnWindowStyleChanged(WindowStyle ws)
-        {
-            SetWindowAccent(ws);
-        }
+        protected void doOnWindowStyleChanged(WindowStyle ws) { SetWindowAccent(ws); }
 
         protected void Dispose()
         {
@@ -45,6 +42,8 @@ namespace FX_Forms
                 SetControlTypeValues(Function, c);
             }
         }
+
+        //Dictionary<Type, Action<Control> Control
 
 
         #region Form Dark Mode

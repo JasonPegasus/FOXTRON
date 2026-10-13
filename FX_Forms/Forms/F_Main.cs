@@ -33,8 +33,7 @@ namespace FX_Forms
         {
             try
             {
-                Engine.AttachedProcess.MemoryChunkSize = memoryChunkSizes[CM_MemoryChunkSizes.SelectedIndex];
-                Shared.Print("size: " + memoryChunkSizes[CM_MemoryChunkSizes.SelectedIndex].ToString("x"), Shared.PrintType.Warn);
+                Engine.AttachedProcess.MemoryChunkSizeGetter = () => memoryChunkSizes[CM_MemoryChunkSizes.SelectedIndex];
                 Engine.AttachedProcess?.ExecuteScanByName(CM_ScanSelection.SelectedItem?.ToString() ?? "");
             }
             catch (Exception ex)

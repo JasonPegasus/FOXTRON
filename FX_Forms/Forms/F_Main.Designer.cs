@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             TopMenuStrip = new MenuStrip();
             Menu_File = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
@@ -49,8 +49,15 @@
             V_address = new DataGridViewTextBoxColumn();
             V_name = new DataGridViewTextBoxColumn();
             V_value = new DataGridViewTextBoxColumn();
+            GB_Scanning = new GroupBox();
+            button1 = new Button();
+            GB_Variables = new GroupBox();
+            button2 = new Button();
+            comboBox1 = new ComboBox();
             TopMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DG_Variables).BeginInit();
+            GB_Scanning.SuspendLayout();
+            GB_Variables.SuspendLayout();
             SuspendLayout();
             // 
             // TopMenuStrip
@@ -60,7 +67,7 @@
             TopMenuStrip.Location = new Point(0, 0);
             TopMenuStrip.Name = "TopMenuStrip";
             TopMenuStrip.Padding = new Padding(5, 1, 0, 1);
-            TopMenuStrip.Size = new Size(580, 24);
+            TopMenuStrip.Size = new Size(689, 24);
             TopMenuStrip.TabIndex = 0;
             TopMenuStrip.Text = "Top Menu Strip";
             // 
@@ -122,33 +129,33 @@
             // 
             // CM_ScanSelection
             // 
-            CM_ScanSelection.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            CM_ScanSelection.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CM_ScanSelection.BackColor = Color.FromArgb(32, 32, 32);
             CM_ScanSelection.DropDownStyle = ComboBoxStyle.DropDownList;
             CM_ScanSelection.ForeColor = Color.White;
             CM_ScanSelection.FormattingEnabled = true;
-            CM_ScanSelection.Location = new Point(398, 52);
+            CM_ScanSelection.Location = new Point(6, 37);
             CM_ScanSelection.Name = "CM_ScanSelection";
-            CM_ScanSelection.Size = new Size(170, 23);
+            CM_ScanSelection.Size = new Size(162, 23);
             CM_ScanSelection.TabIndex = 3;
             // 
             // BT_Scan
             // 
-            BT_Scan.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_Scan.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             BT_Scan.BackColor = Color.FromArgb(192, 0, 0);
             BT_Scan.FlatStyle = FlatStyle.Popup;
-            BT_Scan.Location = new Point(398, 128);
+            BT_Scan.Location = new Point(6, 117);
             BT_Scan.Name = "BT_Scan";
-            BT_Scan.Size = new Size(170, 38);
+            BT_Scan.Size = new Size(162, 35);
             BT_Scan.TabIndex = 5;
             BT_Scan.Text = "Scan";
             BT_Scan.UseVisualStyleBackColor = false;
             // 
             // label1
             // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
-            label1.Location = new Point(398, 34);
+            label1.Location = new Point(6, 19);
             label1.Name = "label1";
             label1.Size = new Size(88, 15);
             label1.TabIndex = 7;
@@ -156,9 +163,9 @@
             // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
-            label2.Location = new Point(398, 81);
+            label2.Location = new Point(6, 63);
             label2.Name = "label2";
             label2.Size = new Size(113, 15);
             label2.TabIndex = 11;
@@ -167,49 +174,51 @@
             // 
             // CM_MemoryChunkSizes
             // 
-            CM_MemoryChunkSizes.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            CM_MemoryChunkSizes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CM_MemoryChunkSizes.BackColor = Color.FromArgb(32, 32, 32);
             CM_MemoryChunkSizes.DropDownStyle = ComboBoxStyle.DropDownList;
             CM_MemoryChunkSizes.ForeColor = Color.White;
             CM_MemoryChunkSizes.FormattingEnabled = true;
-            CM_MemoryChunkSizes.Location = new Point(398, 99);
+            CM_MemoryChunkSizes.Location = new Point(6, 81);
             CM_MemoryChunkSizes.Name = "CM_MemoryChunkSizes";
             CM_MemoryChunkSizes.Size = new Size(113, 23);
             CM_MemoryChunkSizes.TabIndex = 12;
             // 
             // DG_Variables
             // 
+            DG_Variables.AllowUserToAddRows = false;
+            DG_Variables.AllowUserToResizeRows = false;
             DG_Variables.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            DG_Variables.BackgroundColor = Color.FromArgb(64, 64, 64);
+            DG_Variables.BackgroundColor = Color.FromArgb(48, 48, 48);
             DG_Variables.BorderStyle = BorderStyle.None;
-            DG_Variables.CellBorderStyle = DataGridViewCellBorderStyle.RaisedVertical;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            DG_Variables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            DG_Variables.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            DG_Variables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             DG_Variables.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DG_Variables.Columns.AddRange(new DataGridViewColumn[] { V_address, V_name, V_value });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            DG_Variables.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            DG_Variables.DefaultCellStyle = dataGridViewCellStyle5;
             DG_Variables.EnableHeadersVisualStyles = false;
             DG_Variables.GridColor = Color.DarkGray;
             DG_Variables.Location = new Point(12, 34);
             DG_Variables.Name = "DG_Variables";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            DG_Variables.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = SystemColors.Control;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+            DG_Variables.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             DG_Variables.RowHeadersVisible = false;
-            DG_Variables.Size = new Size(380, 391);
+            DG_Variables.Size = new Size(380, 443);
             DG_Variables.TabIndex = 13;
             // 
             // V_address
@@ -232,27 +241,92 @@
             V_value.HeaderText = "Value";
             V_value.Name = "V_value";
             // 
+            // GB_Scanning
+            // 
+            GB_Scanning.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            GB_Scanning.Controls.Add(label1);
+            GB_Scanning.Controls.Add(CM_ScanSelection);
+            GB_Scanning.Controls.Add(CM_MemoryChunkSizes);
+            GB_Scanning.Controls.Add(label2);
+            GB_Scanning.Controls.Add(BT_Scan);
+            GB_Scanning.ForeColor = Color.White;
+            GB_Scanning.Location = new Point(398, 34);
+            GB_Scanning.Name = "GB_Scanning";
+            GB_Scanning.Size = new Size(190, 159);
+            GB_Scanning.TabIndex = 15;
+            GB_Scanning.TabStop = false;
+            GB_Scanning.Text = "Scanning";
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button1.BackColor = Color.FromArgb(48, 48, 48);
+            button1.FlatStyle = FlatStyle.Popup;
+            button1.Location = new Point(6, 19);
+            button1.Name = "button1";
+            button1.Size = new Size(162, 37);
+            button1.TabIndex = 15;
+            button1.Text = "Add Value Manually";
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // GB_Variables
+            // 
+            GB_Variables.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            GB_Variables.Controls.Add(button2);
+            GB_Variables.Controls.Add(comboBox1);
+            GB_Variables.ForeColor = Color.White;
+            GB_Variables.Location = new Point(12, 483);
+            GB_Variables.Name = "GB_Variables";
+            GB_Variables.Size = new Size(380, 58);
+            GB_Variables.TabIndex = 16;
+            GB_Variables.TabStop = false;
+            GB_Variables.Text = "Variables";
+            // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            button2.BackColor = Color.FromArgb(48, 48, 48);
+            button2.FlatStyle = FlatStyle.Popup;
+            button2.Location = new Point(174, 22);
+            button2.Name = "button2";
+            button2.Size = new Size(152, 23);
+            button2.TabIndex = 6;
+            button2.Text = "Add Variable Manually";
+            button2.UseVisualStyleBackColor = false;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox1.BackColor = Color.FromArgb(32, 32, 32);
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.ForeColor = Color.White;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(8, 22);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(160, 23);
+            comboBox1.TabIndex = 4;
+            // 
             // F_Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(580, 437);
+            ClientSize = new Size(689, 578);
+            Controls.Add(GB_Variables);
+            Controls.Add(GB_Scanning);
             Controls.Add(DG_Variables);
-            Controls.Add(CM_MemoryChunkSizes);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(BT_Scan);
-            Controls.Add(CM_ScanSelection);
             Controls.Add(TopMenuStrip);
             Font = new Font("Segoe UI", 9F);
             ForeColor = Color.White;
             MainMenuStrip = TopMenuStrip;
             Name = "F_Main";
-            Text = "Form1";
+            Text = "``";
             TopMenuStrip.ResumeLayout(false);
             TopMenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DG_Variables).EndInit();
+            GB_Scanning.ResumeLayout(false);
+            GB_Scanning.PerformLayout();
+            GB_Variables.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -277,5 +351,10 @@
         private DataGridViewTextBoxColumn V_address;
         private DataGridViewTextBoxColumn V_name;
         private DataGridViewTextBoxColumn V_value;
+        private GroupBox GB_Scanning;
+        private Button button1;
+        private GroupBox GB_Variables;
+        private Button button2;
+        private ComboBox comboBox1;
     }
 }

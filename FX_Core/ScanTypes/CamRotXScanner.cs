@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FX_Core.ScanTypes
 {
-    [ScanName("Camera Yaw Rotation")]
+    [ScanTypeData("Camera Yaw Rotation")]
     internal class CamRotXScanner : ScanType
     {
         public CamRotXScanner(ProcessAnalyzer analyzedProcess) : base(analyzedProcess) { }
@@ -151,7 +151,7 @@ namespace FX_Core.ScanTypes
 
        
 
-        public override FloatPointer[] ReturnPossiblePointers()
+        public override FloatVariable[] ReturnPossiblePointers()
         {
             int cleans = 200;
             ProcessManager.SetFoxtronPriority(true);
@@ -176,7 +176,7 @@ namespace FX_Core.ScanTypes
             }
             Shared.Print("Final Count: " + pointers.Count);
 
-            return FloatPointer.FromDictionary(pointers);
+            return FloatVariable.FromDictionary(pointers);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace FX_Core
         public static Dictionary<string, Type> ScansList { get; protected set; } =
             Assembly.GetAssembly(typeof(ScanType)).GetTypes()
             .Where(t => t.IsSubclassOf(typeof(ScanType)))
-            .ToDictionary(c => c.GetCustomAttribute<ScanNameAttribute>().ScanName, c => c);
+            .ToDictionary(c => ScanType.GetData(c).Name, c => c);
 
         protected ProcessAnalyzer aProc;
         protected Memory MEM;
@@ -24,9 +24,12 @@ namespace FX_Core
             MEM = aProc.memory;
         }
 
+        public static ScanTypeDataAttribute GetData(Type scanType)
+        { return scanType.GetCustomAttribute<ScanTypeDataAttribute>(); }
+
         protected void Pause(bool p) { ProcessManager.SetPauseProcess(aProc.process, p); }
 
-        public abstract FloatPointer[] ReturnPossiblePointers();
+        public abstract FloatVariable[] ReturnPossiblePointers();
 
         public event Action<int>? OnProgress;
 
@@ -38,13 +41,15 @@ namespace FX_Core
         }
 
         [AttributeUsage(AttributeTargets.Class)]
-        public class ScanNameAttribute : Attribute
+        public class ScanTypeDataAttribute : Attribute
         {
-            public string ScanName { get; }
+            public string Name { get; }
+            public Type[] RequiredScans { get; }
 
-            public ScanNameAttribute(string name)
+            public ScanTypeDataAttribute(string name, Type[] requiredScans = null)
             {
-                ScanName = name;
+                Name = name;
+                RequiredScans = requiredScans;
             }
         }
     }

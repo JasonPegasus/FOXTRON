@@ -82,7 +82,7 @@ namespace FX_UnsafeMemory
                                     //}
                                 }
                             }
-                        }
+                        }``
                     }
                 }
 
@@ -127,6 +127,7 @@ namespace FX_UnsafeMemory
                 }
             }
             ptrs = new Dictionary<IntPtr, float>(result);
+            result.Clear();
             return ogSize - ptrs.Count;
         }
 
