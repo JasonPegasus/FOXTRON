@@ -30,8 +30,8 @@ namespace FX_Forms.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DG_ProcessList = new KatDataGridView();
             P_Img = new DataGridViewImageColumn();
             P_ID = new DataGridViewTextBoxColumn();
@@ -39,6 +39,7 @@ namespace FX_Forms.Forms
             P_Path = new DataGridViewTextBoxColumn();
             BT_Cancel = new Button();
             BT_Select = new Button();
+            TB_Search = new TextBox();
             ((System.ComponentModel.ISupportInitialize)DG_ProcessList).BeginInit();
             SuspendLayout();
             // 
@@ -51,19 +52,19 @@ namespace FX_Forms.Forms
             DG_ProcessList.BackgroundColor = Color.FromArgb(48, 48, 48);
             DG_ProcessList.BorderStyle = BorderStyle.None;
             DG_ProcessList.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            DG_ProcessList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            DG_ProcessList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             DG_ProcessList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DG_ProcessList.Columns.AddRange(new DataGridViewColumn[] { P_Img, P_ID, P_Name, P_Path });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            DG_ProcessList.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            DG_ProcessList.DefaultCellStyle = dataGridViewCellStyle4;
             DG_ProcessList.EnableHeadersVisualStyles = false;
             DG_ProcessList.Location = new Point(12, 12);
             DG_ProcessList.MultiSelect = false;
@@ -71,7 +72,7 @@ namespace FX_Forms.Forms
             DG_ProcessList.ReadOnly = true;
             DG_ProcessList.RowHeadersVisible = false;
             DG_ProcessList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DG_ProcessList.Size = new Size(254, 543);
+            DG_ProcessList.Size = new Size(254, 514);
             DG_ProcessList.TabIndex = 0;
             // 
             // P_Img
@@ -124,11 +125,21 @@ namespace FX_Forms.Forms
             BT_Select.Text = "Select";
             BT_Select.UseVisualStyleBackColor = true;
             // 
+            // TB_Search
+            // 
+            TB_Search.BackColor = Color.FromArgb(32, 32, 32);
+            TB_Search.ForeColor = Color.White;
+            TB_Search.Location = new Point(12, 532);
+            TB_Search.Name = "TB_Search";
+            TB_Search.Size = new Size(254, 23);
+            TB_Search.TabIndex = 3;
+            // 
             // F_ProcessSelector
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(278, 600);
+            Controls.Add(TB_Search);
             Controls.Add(BT_Cancel);
             Controls.Add(BT_Select);
             Controls.Add(DG_ProcessList);
@@ -136,6 +147,7 @@ namespace FX_Forms.Forms
             Text = "F_ProcessSelector";
             ((System.ComponentModel.ISupportInitialize)DG_ProcessList).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -146,5 +158,6 @@ namespace FX_Forms.Forms
         private DataGridViewTextBoxColumn P_Name;
         private DataGridViewTextBoxColumn P_Path;
         private KatDataGridView DG_ProcessList;
+        private TextBox TB_Search;
     }
 }

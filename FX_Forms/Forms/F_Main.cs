@@ -24,7 +24,7 @@ namespace FX_Forms
             Engine.OnAttachChange += OnAttachChange;
             SetupLogs();
             SetupScansCombo();
-            SetupChunkSizesCombo();
+            SetupPageSizesCombo();
             OnAttachChange(false);
             SwitchLogs();
         }
@@ -33,7 +33,7 @@ namespace FX_Forms
         {
             try
             {
-                Engine.AttachedProcess.MemoryChunkSizeGetter = () => memoryChunkSizes[CM_MemoryChunkSizes.SelectedIndex];
+                Engine.AttachedProcess.MemoryPageSizeGetter = () => memoryPageSizes[CM_MemoryPageSizes.SelectedIndex];
                 Engine.AttachedProcess?.ExecuteScanByName(CM_ScanSelection.SelectedItem?.ToString() ?? "");
             }
             catch (Exception ex)
@@ -44,11 +44,11 @@ namespace FX_Forms
             }
         }
 
-        int[] memoryChunkSizes = Enumerable.Range(0, 13).Select(i => (0x400 << i)).ToArray();
-        void SetupChunkSizesCombo()
+        int[] memoryPageSizes = Enumerable.Range(0, 13).Select(i => (0x400 << i)).ToArray();
+        void SetupPageSizesCombo()
         {
-            foreach (int size in memoryChunkSizes) { CM_MemoryChunkSizes.Items.Add(size / 1024 + " KB"); }
-            CM_MemoryChunkSizes.SelectedIndex = 6;
+            foreach (int size in memoryPageSizes) { CM_MemoryPageSizes.Items.Add(size / 1024 + " KB"); }
+            CM_MemoryPageSizes.SelectedIndex = 6;
         }
 
         //void UpdateProgressBar(int progress) { PB_ScanProgress.Value = progress; }
@@ -78,7 +78,7 @@ namespace FX_Forms
 
         void SendAttachTo()
         {
-            Process? proc = FormUtils.OpenProcessSelectionDialog();
+            Process? proc = FormUtils.OpenProcessSelectionDialog(this);
             if (proc is null) return;
             Engine.AttachToProcess(proc);
         }

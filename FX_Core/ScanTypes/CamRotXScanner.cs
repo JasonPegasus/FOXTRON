@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FX_UnsafeMemory;
 
 namespace FX_Core.ScanTypes
 {
@@ -11,12 +12,13 @@ namespace FX_Core.ScanTypes
     {
         public CamRotXScanner(ProcessAnalyzer analyzedProcess) : base(analyzedProcess) { }
 
-        Dictionary<nint, float> Find360()
+        List<TPointer<float>> Find360()
         {
             return MEM.ScanFloatFiltered(e => (e != 0 && e != 1 && Shared.isBetween(e, -360, 360)));
         }
 
-        void FilterBy360(ref Dictionary<nint, float> pointers, int iterations)
+        // Los filtros modifican la lista directamente (in-place), por eso ya no hace falta "ref"
+        void FilterBy360(List<TPointer<float>> pointers, int iterations)
         {
             for (int i = 0; i < iterations; i++)
             {
@@ -25,12 +27,12 @@ namespace FX_Core.ScanTypes
                 InputManager.MoveMouse(20, 0);
                 Thread.Sleep(10);
                 Pause(true);
-                Shared.Print($"Removed {MEM.FilterValues(ref pointers, v => Shared.isBetween(v, -360, 360))} non-360 values! ({pointers.Count} remaining...) ({i}/{iterations})");
+                Shared.Print($"Removed {MEM.FilterValues(pointers, v => Shared.isBetween(v, -360, 360))} non-360 values! ({pointers.Count} remaining...) ({i}/{iterations})");
                 Pause(false);
             }
         }
 
-        void FilterByEqual(ref Dictionary<nint, float> pointers, int iterations)
+        void FilterByEqual(List<TPointer<float>> pointers, int iterations)
         {
             int baseProg = scanProgress;
             int endProg = baseProg + 30;
@@ -42,15 +44,15 @@ namespace FX_Core.ScanTypes
                 if (doMove) { InputManager.MoveMouseRepeat(5, 0, 5, 10); }
                 Thread.Sleep(doMove ? 20 : 10);
                 Pause(true);
-                Shared.Print($"Removed {MEM.CompareFilterValues(ref pointers, (a, b) => (Shared.isBetween(b, -360, 360) && ((doMove) ? a != b : a == b)))} equal values! [doMove: {doMove}] ({pointers.Count} remaining...) ({i}/{iterations})");
+                Shared.Print($"Removed {MEM.CompareFilterValues(pointers, (a, b) => (Shared.isBetween(b, -360, 360) && ((doMove) ? a != b : a == b)))} equal values! [doMove: {doMove}] ({pointers.Count} remaining...) ({i}/{iterations})");
                 Pause(false);
                 //scanProgress = (int)Math.Round(Single.Lerp(baseProg, endProg, i/iterations)); // COMMENTED OUT THANKS TO LACK OF ASYNC UPDATES...
             }
         }
 
-        void FilterByProportion(ref Dictionary<nint, float> pointers, int iterations) // LEFT UNUSED, TOO UNSTABLE (false positives and mainly negatives)
+        void FilterByProportion(List<TPointer<float>> pointers, int iterations) // LEFT UNUSED, TOO UNSTABLE (false positives and mainly negatives)
         {
-            Dictionary<nint, List<float>> history = pointers.Keys.ToDictionary(k => k, k => new List<float>());
+            Dictionary<nint, List<float>> history = pointers.ToDictionary(p => p.Address, p => new List<float>());
             Shared.Print("hist count: " + history.Count);
             for (int i = 0; i < iterations; i++)
             {
@@ -86,10 +88,14 @@ namespace FX_Core.ScanTypes
             Shared.Print("it should be in " + pointerRank.IndexOf(MEM.temp_CamAddress));
         }
 
-        void FilterByWrite(ref Dictionary<nint, float> pointers)
+        void FilterByWrite(List<TPointer<float>> pointers)
         {
-            foreach (nint ptr in pointers.Keys)
+            int write = 0; // Posicion donde se guarda el proximo sobreviviente (compactacion in-place)
+
+            for (int read = 0; read < pointers.Count; read++)
             {
+                nint ptr = pointers[read].Address;
+
                 float ogValue = MEM.ReadFloat(ptr);
                 InputManager.MoveMouseRepeat(5, 0, 5, 10);
                 Thread.Sleep(50);
@@ -97,8 +103,7 @@ namespace FX_Core.ScanTypes
                 if (MEM.ReadFloat(ptr) == ogValue)
                 {
                     Shared.Print($"{Shared.PtrStr(ptr)} got reset or did not change");
-                    pointers.Remove(ptr);
-                    continue;
+                    continue; // descartado
                 }
                 MEM.WriteFloat(ptr, ogValue);
                 Thread.Sleep(50);
@@ -106,22 +111,27 @@ namespace FX_Core.ScanTypes
                 if (MEM.ReadFloat(ptr) == ogValue)
                 {
                     Shared.Print($"{Shared.PtrStr(ptr)} WAS FINE!!!");
+                    pointers[write++] = new TPointer<float>(ptr, ogValue);
                     continue;
                 }
 
-
                 Shared.Print($"{Shared.PtrStr(ptr)} discarded");
-                pointers.Remove(ptr);
             }
+
+            pointers.RemoveRange(write, pointers.Count - write);
         }
 
-        void FilterByCopies(ref Dictionary<nint, float> pointers)
+        void FilterByCopies(List<TPointer<float>> pointers)
         {
-            List<nint> possibles = new();
-            foreach (nint ptr in pointers.Keys)
+            List<TPointer<float>> possibles = new();
+            float[] ogValues = new float[pointers.Count]; // Reutilizado en cada iteracion
+
+            for (int i = 0; i < pointers.Count; i++)
             {
+                nint ptr = pointers[i].Address;
+
                 Pause(true);
-                Dictionary<nint, float> ogPtrs = pointers.ToDictionary(e => e.Key, e => MEM.ReadFloat(e.Key));
+                for (int j = 0; j < pointers.Count; j++) { ogValues[j] = MEM.ReadFloat(pointers[j].Address); } // Foto de todos los valores antes de modificar
                 Shared.Print($"{Shared.PtrStr(ptr)} (pre)  = {MEM.ReadFloat(ptr)}");
                 MEM.DoFloat(ptr, e => e * 1.1f);
                 Shared.Print($"{Shared.PtrStr(ptr)} (post) = {MEM.ReadFloat(ptr)}");
@@ -129,54 +139,66 @@ namespace FX_Core.ScanTypes
                 Thread.Sleep(100);
 
                 bool doBreak = false;
-                foreach (var og in ogPtrs)
+                for (int j = 0; j < pointers.Count; j++)
                 {
-                    if (og.Key != ptr && og.Value != MEM.ReadFloat(og.Key))
+                    if (j != i && ogValues[j] != MEM.ReadFloat(pointers[j].Address))
                     {
                         Shared.Print($"{Shared.PtrStr(ptr)} IS A TOTAL PARENT!!");
-                        possibles.Add(ptr);
+                        possibles.Add(pointers[i]);
                         doBreak = true;
                         break;
                     }
                 }
-                MEM.WriteFloat(ptr, ogPtrs[ptr]);
+                MEM.WriteFloat(ptr, ogValues[i]);
                 if (doBreak) { continue; }
 
                 Shared.Print($"{Shared.PtrStr(ptr)} did not change the rest");
 
                 Thread.Sleep(100);
             }
-            pointers = possibles.ToDictionary(e => e, e => MEM.ReadFloat(e));
+
+            // Reemplaza el contenido de la lista original por los candidatos, con su valor actual
+            pointers.Clear();
+            foreach (var p in possibles)
+            {
+                pointers.Add(new TPointer<float>(p.Address, MEM.ReadFloat(p.Address)));
+            }
         }
 
-       
+
 
         public override FloatVariable[] ReturnPossiblePointers()
         {
             int cleans = 200;
             ProcessManager.SetFoxtronPriority(true);
             scanProgress = 5;
-            Dictionary<nint, float> pointers = Find360();
+            List<TPointer<float>> pointers = Find360();
             scanProgress = 30;
 
             Shared.Print($"Found {pointers.Count} values in the initial 360º range");
 
-            FilterByEqual(ref pointers, cleans);
+            FilterByEqual(pointers, cleans);
             scanProgress = 60;
-            FilterByWrite(ref pointers);
+            FilterByWrite(pointers);
             scanProgress = 80;
-            FilterByCopies(ref pointers);
+            FilterByCopies(pointers);
 
             foreach (var group in pointers.GroupBy(g => g.Value))
             {
                 foreach (var ptr in group)
                 {
-                    Shared.Print($"POSSIBLE: [0x{ptr.Key.ToString("X")} | Value: {ptr.Value}]");
+                    Shared.Print($"POSSIBLE: [0x{ptr.Address.ToString("X")} | Value: {ptr.Value}]");
                 }
             }
             Shared.Print("Final Count: " + pointers.Count);
 
-            return FloatVariable.FromDictionary(pointers);
+            pointers.TrimExcess();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            // La lista final es chica, asi que este diccionario temporal solo sirve de puente con FloatVariable.FromDictionary
+            return FloatVariable.FromDictionary(pointers.ToDictionary(p => p.Address, p => p.Value));
         }
     }
 }

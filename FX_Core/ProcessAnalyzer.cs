@@ -22,7 +22,7 @@ namespace FX_Core
             this.memory = new Memory(process);
         }
 
-        public Func<int> MemoryChunkSizeGetter;
+        public Func<int> MemoryPageSizeGetter;
 
         public FloatVariable[]? ExecuteScanByName(string name, Action<int>? updateProgressMethod = null)
         {
@@ -40,10 +40,10 @@ namespace FX_Core
             ScanType scanType = ((ScanType)Activator.CreateInstance(typeof(T), this));
             if (updateProgressMethod is not null) { scanType.OnProgress += updateProgressMethod; }
 
-            int memsize = MemoryChunkSizeGetter.Invoke();
-            memory.MEMORY_CHUNK_SIZE = memsize;
+            int memsize = MemoryPageSizeGetter.Invoke();
+            memory.MEMORY_PAGE_SIZE = memsize;
             Shared.Print($"Starting Scan Execution of: {typeof(T)}\n" +
-                $"   (Memory Chunk Size: {memsize / 1024}KB ({memsize} / 0x{memsize.ToString("X")}))", PrintType.Info);
+                $"   (Memory Page Size: {memsize / 1024}KB ({memsize} / 0x{memsize.ToString("X")}))", PrintType.Info);
             return scanType.ReturnPossiblePointers();
         }
 

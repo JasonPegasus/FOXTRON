@@ -44,7 +44,7 @@
             BT_Scan = new Button();
             label1 = new Label();
             label2 = new Label();
-            CM_MemoryChunkSizes = new ComboBox();
+            CM_MemoryPageSizes = new ComboBox();
             DG_Variables = new Styles.KatDataGridView();
             V_address = new DataGridViewTextBoxColumn();
             V_name = new DataGridViewTextBoxColumn();
@@ -167,22 +167,22 @@
             label2.AutoSize = true;
             label2.Location = new Point(6, 63);
             label2.Name = "label2";
-            label2.Size = new Size(113, 15);
+            label2.Size = new Size(104, 15);
             label2.TabIndex = 11;
-            label2.Text = "Memory Chunk Size";
+            label2.Text = "Memory Page Size";
             label2.Click += label2_Click;
             // 
-            // CM_MemoryChunkSizes
+            // CM_MemoryPageSizes
             // 
-            CM_MemoryChunkSizes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            CM_MemoryChunkSizes.BackColor = Color.FromArgb(32, 32, 32);
-            CM_MemoryChunkSizes.DropDownStyle = ComboBoxStyle.DropDownList;
-            CM_MemoryChunkSizes.ForeColor = Color.White;
-            CM_MemoryChunkSizes.FormattingEnabled = true;
-            CM_MemoryChunkSizes.Location = new Point(6, 81);
-            CM_MemoryChunkSizes.Name = "CM_MemoryChunkSizes";
-            CM_MemoryChunkSizes.Size = new Size(113, 23);
-            CM_MemoryChunkSizes.TabIndex = 12;
+            CM_MemoryPageSizes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            CM_MemoryPageSizes.BackColor = Color.FromArgb(32, 32, 32);
+            CM_MemoryPageSizes.DropDownStyle = ComboBoxStyle.DropDownList;
+            CM_MemoryPageSizes.ForeColor = Color.White;
+            CM_MemoryPageSizes.FormattingEnabled = true;
+            CM_MemoryPageSizes.Location = new Point(6, 81);
+            CM_MemoryPageSizes.Name = "CM_MemoryPageSizes";
+            CM_MemoryPageSizes.Size = new Size(113, 23);
+            CM_MemoryPageSizes.TabIndex = 12;
             // 
             // DG_Variables
             // 
@@ -246,7 +246,7 @@
             GB_Scanning.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             GB_Scanning.Controls.Add(label1);
             GB_Scanning.Controls.Add(CM_ScanSelection);
-            GB_Scanning.Controls.Add(CM_MemoryChunkSizes);
+            GB_Scanning.Controls.Add(CM_MemoryPageSizes);
             GB_Scanning.Controls.Add(label2);
             GB_Scanning.Controls.Add(BT_Scan);
             GB_Scanning.ForeColor = Color.White;
@@ -271,7 +271,7 @@
             // 
             // GB_Variables
             // 
-            GB_Variables.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            GB_Variables.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GB_Variables.Controls.Add(button2);
             GB_Variables.Controls.Add(comboBox1);
             GB_Variables.ForeColor = Color.White;
@@ -284,7 +284,7 @@
             // 
             // button2
             // 
-            button2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             button2.BackColor = Color.FromArgb(48, 48, 48);
             button2.FlatStyle = FlatStyle.Popup;
             button2.Location = new Point(174, 22);
@@ -296,7 +296,7 @@
             // 
             // comboBox1
             // 
-            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             comboBox1.BackColor = Color.FromArgb(32, 32, 32);
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.ForeColor = Color.White;
@@ -345,7 +345,7 @@
         private Button BT_Scan;
         private Label label1;
         private Label label2;
-        private ComboBox CM_MemoryChunkSizes;
+        private ComboBox CM_MemoryPageSizes;
         private ToolStripMenuItem Menu_Settings;
         private Styles.KatDataGridView DG_Variables;
         private DataGridViewTextBoxColumn V_address;

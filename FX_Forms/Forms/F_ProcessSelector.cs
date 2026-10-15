@@ -26,6 +26,47 @@ namespace FX_Forms.Forms
             BT_Cancel.Click += (_, _) => CancelSelect();
             BT_Select.Click += (_, _) => FinishSelect();
             DG_ProcessList.CellContentDoubleClick += (_, _) => FinishSelect();
+            TB_Search.KeyDown += OnSearchKeyDown;
+            TB_Search.TextChanged += SearchTextChanged;
+            DG_ProcessList.Sort(DG_ProcessList.Columns[2], ListSortDirection.Ascending);
+            this.Shown += (_, _) => {
+                TB_Search.Focus();
+            };
+        }
+
+        private void SearchTextChanged(object? sender, EventArgs e)
+        {
+            bool first = true;
+            foreach (DataGridViewRow row in DG_ProcessList.Rows)
+            {
+                if (row.Cells[2].Value.ToString().Contains(TB_Search.Text))
+                {
+                    if (first) 
+                    {
+                        first = false;
+                        DG_ProcessList.ClearSelection();
+                        row.Selected = true;
+                    }
+                    row.Visible = true;
+                }
+                else
+                {
+                    row.Visible = false;
+                }
+            }
+        }
+
+        void OnSearchKeyDown(Object? sender, KeyEventArgs e)
+        {
+            var k = e.KeyCode;
+            if (k == Keys.Enter) { FinishSelect(); }
+            if (k == Keys.Up || k == Keys.Down) 
+            {
+                DG_ProcessList.Focus();
+                SendKeys.SendWait("{"+k.ToString()+"}");
+                e.Handled = true;
+                TB_Search.Focus();
+            }
         }
 
         void FillProcessList()

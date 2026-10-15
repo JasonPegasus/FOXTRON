@@ -11,9 +11,10 @@ namespace FX_Forms
 {
     internal class FormUtils
     {
-        internal static Process? OpenProcessSelectionDialog(string title = null)
+        internal static Process? OpenProcessSelectionDialog(Form parent = null, string title = null)
         {
             F_ProcessSelector fSelect = new(title);
+            fSelect.Location = (parent ?? fSelect).Location;
             Process? sProc = (fSelect.ShowDialog() == DialogResult.OK) ? ProcessManager.TryGetProcessByID(fSelect.ReturnPID) : null;
             fSelect.Dispose();
             return sProc;
