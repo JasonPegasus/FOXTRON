@@ -21,7 +21,7 @@ namespace FX_Forms.Forms
         {
             InitializeComponent();
             FormStyle.SetStyle<KatStyle>(this);
-            this.Text = (windowTitle is null) ? "Process Selection" : windowTitle;
+            this.Text = windowTitle ?? "Process Selection";
             FillProcessList();
             BT_Cancel.Click += (_, _) => CancelSelect();
             BT_Select.Click += (_, _) => FinishSelect();
