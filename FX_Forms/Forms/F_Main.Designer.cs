@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             TopMenuStrip = new MenuStrip();
             Menu_File = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
@@ -67,7 +67,7 @@
             TopMenuStrip.Location = new Point(0, 0);
             TopMenuStrip.Name = "TopMenuStrip";
             TopMenuStrip.Padding = new Padding(5, 1, 0, 1);
-            TopMenuStrip.Size = new Size(689, 24);
+            TopMenuStrip.Size = new Size(557, 24);
             TopMenuStrip.TabIndex = 0;
             TopMenuStrip.Text = "Top Menu Strip";
             // 
@@ -192,33 +192,33 @@
             DG_Variables.BackgroundColor = Color.FromArgb(48, 48, 48);
             DG_Variables.BorderStyle = BorderStyle.None;
             DG_Variables.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle4.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle4.ForeColor = Color.White;
-            DG_Variables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            DG_Variables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             DG_Variables.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DG_Variables.Columns.AddRange(new DataGridViewColumn[] { V_address, V_name, V_value });
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle5.ForeColor = Color.White;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-            DG_Variables.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            DG_Variables.DefaultCellStyle = dataGridViewCellStyle2;
             DG_Variables.EnableHeadersVisualStyles = false;
             DG_Variables.GridColor = Color.DarkGray;
             DG_Variables.Location = new Point(12, 34);
             DG_Variables.Name = "DG_Variables";
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Control;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            DG_Variables.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            DG_Variables.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             DG_Variables.RowHeadersVisible = false;
-            DG_Variables.Size = new Size(380, 443);
+            DG_Variables.Size = new Size(337, 443);
             DG_Variables.TabIndex = 13;
             // 
             // V_address
@@ -250,7 +250,7 @@
             GB_Scanning.Controls.Add(label2);
             GB_Scanning.Controls.Add(BT_Scan);
             GB_Scanning.ForeColor = Color.White;
-            GB_Scanning.Location = new Point(398, 34);
+            GB_Scanning.Location = new Point(355, 34);
             GB_Scanning.Name = "GB_Scanning";
             GB_Scanning.Size = new Size(190, 159);
             GB_Scanning.TabIndex = 15;
@@ -277,7 +277,7 @@
             GB_Variables.ForeColor = Color.White;
             GB_Variables.Location = new Point(12, 483);
             GB_Variables.Name = "GB_Variables";
-            GB_Variables.Size = new Size(380, 58);
+            GB_Variables.Size = new Size(337, 58);
             GB_Variables.TabIndex = 16;
             GB_Variables.TabStop = false;
             GB_Variables.Text = "Variables";
@@ -311,7 +311,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(689, 578);
+            ClientSize = new Size(557, 578);
             Controls.Add(GB_Variables);
             Controls.Add(GB_Scanning);
             Controls.Add(DG_Variables);

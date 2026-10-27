@@ -34,7 +34,8 @@ namespace FX_Forms
             try
             {
                 Engine.AttachedProcess.MemoryPageSizeGetter = () => memoryPageSizes[CM_MemoryPageSizes.SelectedIndex];
-                Engine.AttachedProcess?.ExecuteScanByName(CM_ScanSelection.SelectedItem?.ToString() ?? "");
+                string? scanName = CM_ScanSelection.SelectedItem?.ToString();
+                Shared.Print(FormUtils.OpenAddressSelectionDialog(Engine.AttachedProcess?.ExecuteScanByName(scanName), this, scanName).ToString());
             }
             catch (Exception ex)
             {

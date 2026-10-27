@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DG_AddressList = new DataGridView();
             address = new DataGridViewTextBoxColumn();
             ogValue = new DataGridViewTextBoxColumn();
             value = new DataGridViewTextBoxColumn();
-            button1 = new Button();
+            BT_Select = new Button();
             ((System.ComponentModel.ISupportInitialize)DG_AddressList).BeginInit();
             SuspendLayout();
             // 
             // DG_AddressList
             // 
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            DG_AddressList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            DG_AddressList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             DG_AddressList.BackgroundColor = Color.FromArgb(30, 30, 30);
             DG_AddressList.BorderStyle = BorderStyle.None;
             DG_AddressList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -74,16 +74,16 @@
             value.HeaderText = "Value";
             value.Name = "value";
             // 
-            // button1
+            // BT_Select
             // 
-            button1.BackColor = Color.FromArgb(30, 30, 30);
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.Location = new Point(12, 524);
-            button1.Name = "button1";
-            button1.Size = new Size(86, 33);
-            button1.TabIndex = 1;
-            button1.Text = "Select";
-            button1.UseVisualStyleBackColor = false;
+            BT_Select.BackColor = Color.FromArgb(30, 30, 30);
+            BT_Select.FlatStyle = FlatStyle.Popup;
+            BT_Select.Location = new Point(12, 524);
+            BT_Select.Name = "BT_Select";
+            BT_Select.Size = new Size(86, 33);
+            BT_Select.TabIndex = 1;
+            BT_Select.Text = "Select";
+            BT_Select.UseVisualStyleBackColor = false;
             // 
             // F_AddressList
             // 
@@ -91,7 +91,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             ClientSize = new Size(394, 567);
-            Controls.Add(button1);
+            Controls.Add(BT_Select);
             Controls.Add(DG_AddressList);
             Font = new Font("Segoe UI", 13F);
             ForeColor = Color.White;
@@ -108,6 +108,6 @@
         private DataGridViewTextBoxColumn address;
         private DataGridViewTextBoxColumn ogValue;
         private DataGridViewTextBoxColumn value;
-        private Button button1;
+        private Button BT_Select;
     }
 }

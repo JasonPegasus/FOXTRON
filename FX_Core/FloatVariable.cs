@@ -112,7 +112,7 @@ namespace FX_Core
         }
 
         public override int GetHashCode() => Value.GetHashCode();
-        public override string ToString() => Value.ToString();
+        public override string ToString() => $"Address: {Address.ToString()} | Value: {Value.ToString()}";
         #endregion
     }
 }

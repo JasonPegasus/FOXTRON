@@ -11,6 +11,8 @@ namespace FX_Core
     {
         public static event Action<bool>? OnAttachChange;
 
+        internal static Func<nint> AddressSelectionMethod;
+
         public static ProcessAnalyzer? AttachedProcess { get; private set; }
 
         public static ProcessAnalyzer AttachToProcess(Process process)

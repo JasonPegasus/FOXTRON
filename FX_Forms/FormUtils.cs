@@ -21,6 +21,16 @@ namespace FX_Forms
             return sProc;
         }
 
+        internal static FloatVariable OpenAddressSelectionDialog(FloatVariable[] fv, Form parent = null, string title = null)
+        {
+            F_AddressList fSelect = new(fv, title);
+            fSelect.Location = (parent ?? fSelect).Location;
+            fSelect.ShowDialog();
+            FloatVariable sAddr = fSelect.returnFV;
+            fSelect.Dispose();
+            return sAddr;
+        }
+
         #region -- COLOR --
 
         internal static Color AddColors(Color color1, Color color2)

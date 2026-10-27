@@ -39,7 +39,7 @@ namespace FX_Forms.Forms
             bool first = true;
             foreach (DataGridViewRow row in DG_ProcessList.Rows)
             {
-                if (row.Cells[2].Value.ToString().Contains(TB_Search.Text))
+                if (row.Cells[2].Value.ToString().ToLower().Contains(TB_Search.Text.ToLower()))
                 {
                     if (first) 
                     {
