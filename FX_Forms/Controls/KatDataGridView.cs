@@ -23,6 +23,8 @@ namespace FX_Forms.Styles
             this.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             this.AllowUserToResizeRows = false;
             this.AllowUserToAddRows = false;
+            this.DefaultCellStyle.SelectionBackColor = Color.Gray;
+            this.DefaultCellStyle.SelectionForeColor = Color.Black;
         }
 
 

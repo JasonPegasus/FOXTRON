@@ -31,6 +31,15 @@ namespace FX_Forms
             return sAddr;
         }
 
+        internal static void OpenChangeValueDialog(ref FloatVariable fv, Form parent = null)
+        {
+            using (F_ChangeValue fSelect = new(fv))
+            {
+                fSelect.Location = (parent ?? fSelect).Location;
+                fSelect.ShowDialog();
+            }
+        }
+
         #region -- COLOR --
 
         internal static Color AddColors(Color color1, Color color2)

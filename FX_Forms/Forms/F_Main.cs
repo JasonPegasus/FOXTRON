@@ -35,7 +35,9 @@ namespace FX_Forms
             {
                 Engine.AttachedProcess.MemoryPageSizeGetter = () => memoryPageSizes[CM_MemoryPageSizes.SelectedIndex];
                 string? scanName = CM_ScanSelection.SelectedItem?.ToString();
-                Shared.Print(FormUtils.OpenAddressSelectionDialog(Engine.AttachedProcess?.ExecuteScanByName(scanName), this, scanName).ToString());
+                FloatVariable fv = FormUtils.OpenAddressSelectionDialog(Engine.AttachedProcess?.ExecuteScanByName(scanName), this, scanName);
+                Shared.Print($"[ Selected final: {fv} ]", Shared.PrintType.Success);
+                DG_Variables.Rows.Add(fv.Address, scanName, fv.Value);
             }
             catch (Exception ex)
             {
