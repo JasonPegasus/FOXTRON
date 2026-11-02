@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Forms;
 
 namespace FX_Forms.Styles
 {
@@ -25,9 +21,31 @@ namespace FX_Forms.Styles
             this.AllowUserToAddRows = false;
             this.DefaultCellStyle.SelectionBackColor = Color.Gray;
             this.DefaultCellStyle.SelectionForeColor = Color.Black;
+            this.RowHeadersDefaultCellStyle.SelectionBackColor = Color.Gray;
+            this.RowHeadersDefaultCellStyle.SelectionForeColor = Color.Black;
+
+            foreach (DataGridViewColumn column in this.Columns)
+            {
+                if (column is DataGridViewButtonColumn btn)
+                {
+                    btn.FlatStyle = FlatStyle.Popup;
+                    btn.DefaultCellStyle.BackColor = Color.FromArgb(32,32,32);
+                    btn.DefaultCellStyle.ForeColor = Color.White;
+                    btn.Text = "[•]";
+                }
+            }
         }
 
-
+        protected override void OnRowsAdded(DataGridViewRowsAddedEventArgs e)
+        {
+            base.OnRowsAdded(e);
+            foreach (var cell in this.Rows[e.RowIndex].Cells)
+            {
+                if (cell is DataGridViewButtonCell btn)
+                {
+                }
+            }
+        }
 
         DataGridViewCellStyle KatCellStyle = new DataGridViewCellStyle(){
                  BackColor = Color.FromArgb(32, 32, 32),

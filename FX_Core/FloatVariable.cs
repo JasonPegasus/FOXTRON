@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FX_UnsafeMemory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace FX_Core
+﻿namespace FX_Core
 {
     public struct FloatVariable
     {
@@ -112,7 +104,7 @@ namespace FX_Core
         }
 
         public override int GetHashCode() => Value.GetHashCode();
-        public override string ToString() => $"Address: {Address.ToString()} | Value: {Value.ToString()}";
+        public override string ToString() => $"[{Shared.PtrStr(Address)}: {Value.ToString()}]";
         #endregion
     }
 }

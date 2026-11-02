@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Swed64;
-using System;
-using System.Diagnostics;
-using System.Security.Principal;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 
@@ -21,7 +12,6 @@ namespace FX_Core
 
         public static void SetPauseProcess(Process process, bool Pause)
         {
-            return; // TEMPORAL
             if (Pause) 
             { NtSuspendProcess(process.Handle); return; }
             NtResumeProcess(process.Handle);

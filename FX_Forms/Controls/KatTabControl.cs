@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FX_Forms.Styles;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
-namespace FX_Forms.Controls
+﻿namespace FX_Forms.Controls
 {
     public class KatTabControl : TabControl
     {

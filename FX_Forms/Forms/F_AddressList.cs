@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using FX_Core;
+﻿using FX_Core;
 using FX_Forms.Styles;
 
 namespace FX_Forms
@@ -17,7 +8,7 @@ namespace FX_Forms
         public FloatVariable returnFV;
         List<FloatVariable> varList;
 
-        private readonly System.Windows.Forms.Timer dgUpdateTimer = new() { Interval = 500 }; // ~60 fps
+        private readonly System.Windows.Forms.Timer dgUpdateTimer = new() { Interval = 16 }; // ~60 fps
 
         public F_AddressList(FloatVariable[] fv, string windowTitle)
         {
@@ -28,12 +19,6 @@ namespace FX_Forms
             BT_Select.Click += (_, _) => SelectAddress();
             DG_AddressList.KeyDown += (object s, KeyEventArgs e) => { if (e.KeyCode == Keys.Enter) SelectAddress(); };
             DG_AddressList.CellContentClick += OnDGClicked;
-
-            var btn = (DataGridViewButtonColumn)DG_AddressList.Columns["c_BTN_changeValue"];
-            btn.FlatStyle = BT_Select.FlatStyle;
-            btn.DefaultCellStyle.ForeColor = BT_Select.ForeColor;
-            btn.DefaultCellStyle.BackColor = BT_Select.BackColor;
-            btn.Text = "=";
 
             FillDataGrid();
             dgUpdateTimer.Tick += (_, _) => UpdateDataGrid();
@@ -55,13 +40,13 @@ namespace FX_Forms
         void FillDataGrid()
         {
             foreach (FloatVariable fv in varList)
-            { DG_AddressList.Rows.Add(fv.Address, fv.Value, fv.Value); }
+            { DG_AddressList.Rows.Add(Shared.PtrStr(fv.Address), fv.Value, fv.Value); }
         }
 
         void UpdateDataGrid()
         {
             foreach(DataGridViewRow row in DG_AddressList.Rows)
-            { row.Cells[1].Value = GetFVFromCell(row.Cells[0]); }
+            { row.Cells[2].Value = GetFVFromCell(row.Cells[0]).Value; }
         }
 
         void SelectAddress()
@@ -71,8 +56,6 @@ namespace FX_Forms
         }
 
         FloatVariable GetFVFromCell(DataGridViewCell cell)
-        {
-            return varList.Find(v => v.Address == (nint)cell.Value);
-        }
+        { return varList.Find(v => v.Address == Shared.StringToPtr((string)cell.Value)); }
     }
 }

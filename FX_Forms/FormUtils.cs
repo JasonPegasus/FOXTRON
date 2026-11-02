@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using FX_Core;
 using FX_Forms.Forms;
 
@@ -38,6 +32,23 @@ namespace FX_Forms
                 fSelect.Location = (parent ?? fSelect).Location;
                 fSelect.ShowDialog();
             }
+        }
+
+        internal static nint OpenAskAddressDialog(string variableName, Form parent = null)
+        {
+            nint addr;
+            using (F_AskAddress fSelect = new(variableName))
+            {
+                fSelect.Location = (parent ?? fSelect).Location;
+                fSelect.ShowDialog();
+                addr = fSelect.returnAddr;
+            }
+            return addr;
+        }
+
+        internal static void ShowMessage(string text, Shared.PrintType printType = Shared.PrintType.Info, string title = null)
+        {
+            MessageBox.Show(text, title ?? printType.ToString());
         }
 
         #region -- COLOR --

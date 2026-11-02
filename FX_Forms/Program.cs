@@ -1,5 +1,3 @@
-using FX_Core;
-
 namespace FX_Forms
 {
     internal static class Program

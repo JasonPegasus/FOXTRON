@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using FX_Core;
+﻿using System.Drawing.Drawing2D;
 
 namespace FX_Forms.Styles
 {
@@ -13,7 +7,7 @@ namespace FX_Forms.Styles
         public KatStyle(Form form) : base(form) { }
 
 
-        private readonly System.Windows.Forms.Timer timer = new() { Interval = 16 }; // ~60 fps
+        //private readonly System.Windows.Forms.Timer timer = new() { Interval = 16 }; // ~60 fps
 
         protected override void ApplyStyle()
         {
@@ -22,29 +16,32 @@ namespace FX_Forms.Styles
             SetWindowBorderDarkMode(true);
             SetControlsDarkMode(true);
             SetupIndividualControls();
+            bForm.BackColor = bgBaseColor;
 
-            timer.Tick += (_, _) => bForm.Invalidate();
-            timer.Start();
+            //timer.Tick += (_, _) => bForm.Invalidate();
+            //timer.Start();
+            upperFrame = bForm.Controls.OfType<MenuStrip>().FirstOrDefault()?.Height ?? 0;
         }
 
-        static public Color bgBaseColor = Color.FromArgb(64, 64, 64);
-        static public Color bgGradientColor = Color.FromArgb(32, 32, 32);
+        readonly Color bgBaseColor = Color.FromArgb(40, 40, 40);
+        readonly Color bgGradientColor = Color.FromArgb(30, 30, 30);
+        readonly Color borderBaseColor = Color.FromArgb(64, 64, 64);
+        readonly Color borderGradientColor = Color.FromArgb(96, 96, 96);
 
-        static public Color borderBaseColor = Color.FromArgb(64, 64, 64);
-        static public Color borderGradientColor = Color.FromArgb(96, 96, 96);
+        readonly int borderSize = 4;
 
-        static int borderSize = 4;
-
-        static Font font = new Font("Consolas", 8);
+        readonly Font font = new Font("Consolas", 8);
 
         long time = 0;
+
+        int upperFrame = 0;
 
         void OnPaint(object? sender, PaintEventArgs e)
         {
             time++;
-            Rectangle fullArea = bForm.ClientRectangle;
-            Rectangle centerArea = new Rectangle(borderSize, borderSize, 
-                (int)(bForm.ClientRectangle.Width - borderSize*2), (int)(bForm.ClientRectangle.Height - borderSize*2));
+            Rectangle fullArea = new Rectangle(bForm.ClientRectangle.X, bForm.ClientRectangle.Y + upperFrame, bForm.ClientRectangle.Width, bForm.ClientRectangle.Height - upperFrame);
+            Rectangle centerArea = new Rectangle(fullArea.X + borderSize, fullArea.Y + borderSize, 
+                (int)(fullArea.Width - borderSize*2), (int)(fullArea.Height - borderSize*2));
 
             //Color rainbow = FormUtils.ColorLerp([Color.Red, Color.Green, Color.Blue, Color.Red], (float)(time % 500) / 500, false);
 
@@ -66,8 +63,11 @@ namespace FX_Forms.Styles
             { e.Graphics.FillRectangle(brush, fullArea); }
 
             // CENTER
-            using (LinearGradientBrush brush = new(new Rectangle(centerArea.X, centerArea.Y, centerArea.Width, 
-                (int)(centerArea.Height * (4 + Math.Sin((double)time/100)*1))), bgBaseColor, bgGradientColor, LinearGradientMode.BackwardDiagonal))
+            //using (LinearGradientBrush brush = new(new Rectangle(centerArea.X, centerArea.Y, centerArea.Width, 
+            //    (int)(centerArea.Height * (4 + Math.Sin((double)time/100)*1))), bgBaseColor, bgGradientColor, LinearGradientMode.BackwardDiagonal))
+            //{ e.Graphics.FillRectangle(brush, centerArea); }
+            using (LinearGradientBrush brush = new(new Rectangle(centerArea.X, centerArea.Y, centerArea.Width, centerArea.Height),
+                bgBaseColor, bgGradientColor, LinearGradientMode.BackwardDiagonal))
             { e.Graphics.FillRectangle(brush, centerArea); }
         }
 

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             BT_Select = new Button();
             DG_AddressList = new Styles.KatDataGridView();
@@ -41,7 +43,7 @@
             // 
             // BT_Select
             // 
-            BT_Select.BackColor = Color.FromArgb(30, 30, 30);
+            BT_Select.BackColor = Color.FromArgb(48, 48, 48);
             BT_Select.FlatStyle = FlatStyle.Popup;
             BT_Select.Location = new Point(12, 524);
             BT_Select.Name = "BT_Select";
@@ -64,18 +66,26 @@
             DG_AddressList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             DG_AddressList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DG_AddressList.Columns.AddRange(new DataGridViewColumn[] { c_address, c_ogvalue, c_currentValue, c_BTN_changeValue });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 13F);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            DG_AddressList.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 13F);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            DG_AddressList.DefaultCellStyle = dataGridViewCellStyle3;
             DG_AddressList.EnableHeadersVisualStyles = false;
             DG_AddressList.Location = new Point(12, 12);
             DG_AddressList.MultiSelect = false;
             DG_AddressList.Name = "DG_AddressList";
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Control;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 13F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.Gray;
+            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            DG_AddressList.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             DG_AddressList.RowHeadersVisible = false;
             DG_AddressList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             DG_AddressList.Size = new Size(403, 506);
@@ -104,8 +114,14 @@
             // c_BTN_changeValue
             // 
             c_BTN_changeValue.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(32, 32, 32);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            c_BTN_changeValue.DefaultCellStyle = dataGridViewCellStyle2;
+            c_BTN_changeValue.FlatStyle = FlatStyle.Popup;
             c_BTN_changeValue.HeaderText = "Edit";
             c_BTN_changeValue.Name = "c_BTN_changeValue";
+            c_BTN_changeValue.Text = "[•]";
             c_BTN_changeValue.Width = 50;
             // 
             // F_AddressList

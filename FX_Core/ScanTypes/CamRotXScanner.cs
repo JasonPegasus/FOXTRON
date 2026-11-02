@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FX_UnsafeMemory;
+﻿using FX_UnsafeMemory;
 
 namespace FX_Core.ScanTypes
 {
@@ -17,15 +12,14 @@ namespace FX_Core.ScanTypes
             return MEM.ScanFloatFiltered(e => (e != 0 && e != 1 && Shared.isBetween(e, -360, 360)));
         }
 
-        // Los filtros modifican la lista directamente (in-place), por eso ya no hace falta "ref"
         void FilterBy360(List<TPointer<float>> pointers, int iterations)
         {
             for (int i = 0; i < iterations; i++)
             {
-                ProcessManager.SetForegroundWindow(aProc.process.MainWindowHandle);
-                Thread.Sleep(10);
+                Foreground();
+                Wait(1);
                 InputManager.MoveMouse(20, 0);
-                Thread.Sleep(10);
+                Wait(1);
                 Pause(true);
                 Shared.Print($"Removed {MEM.FilterValues(pointers, v => Shared.isBetween(v, -360, 360))} non-360 values! ({pointers.Count} remaining...) ({i}/{iterations})");
                 Pause(false);
@@ -39,10 +33,10 @@ namespace FX_Core.ScanTypes
             for (int i = 0; i < iterations; i++)
             {
                 bool doMove = Shared.random.Next(2) == 0;
-                ProcessManager.SetForegroundWindow(aProc.process.MainWindowHandle);
-                Thread.Sleep(10);
-                if (doMove) { InputManager.MoveMouseRepeat(5, 0, 5, 10); }
-                Thread.Sleep(doMove ? 20 : 10);
+                Foreground();
+                Wait(1);
+                if (doMove) { InputManager.MoveMouseRepeat(3, 0, 10, frameMilliseconds); }
+                Wait(doMove ? 2 : 1);
                 Pause(true);
                 Shared.Print($"Removed {MEM.CompareFilterValues(pointers, (a, b) => (Shared.isBetween(b, -360, 360) && ((doMove) ? a != b : a == b)))} equal values! [doMove: {doMove}] ({pointers.Count} remaining...) ({i}/{iterations})");
                 Pause(false);
@@ -56,10 +50,10 @@ namespace FX_Core.ScanTypes
             Shared.Print("hist count: " + history.Count);
             for (int i = 0; i < iterations; i++)
             {
-                ProcessManager.SetForegroundWindow(aProc.process.MainWindowHandle);
-                Thread.Sleep(10);
-                InputManager.MoveMouseRepeat(1, 0, 50, 10);
-                Thread.Sleep(10);
+                Foreground();
+                Wait(1);
+                InputManager.MoveMouseRepeat(3, 0, 10, frameMilliseconds);
+                Wait(1);
 
                 MEM.GetValuesDeltas(pointers, ref history);
                 Shared.Print($"Got values ({i})");
@@ -97,8 +91,8 @@ namespace FX_Core.ScanTypes
                 nint ptr = pointers[read].Address;
 
                 float ogValue = MEM.ReadFloat(ptr);
-                InputManager.MoveMouseRepeat(5, 0, 5, 10);
-                Thread.Sleep(50);
+                InputManager.MoveMouseRepeat(5, 0, 5, frameMilliseconds);
+                Wait(5);
 
                 if (MEM.ReadFloat(ptr) == ogValue)
                 {
@@ -106,7 +100,7 @@ namespace FX_Core.ScanTypes
                     continue; // descartado
                 }
                 MEM.WriteFloat(ptr, ogValue);
-                Thread.Sleep(50);
+                Wait(5);
 
                 if (MEM.ReadFloat(ptr) == ogValue)
                 {
@@ -136,7 +130,7 @@ namespace FX_Core.ScanTypes
                 MEM.DoFloat(ptr, e => e * 1.1f);
                 Shared.Print($"{Shared.PtrStr(ptr)} (post) = {MEM.ReadFloat(ptr)}");
                 Pause(false);
-                Thread.Sleep(100);
+                Wait(10);
 
                 bool doBreak = false;
                 for (int j = 0; j < pointers.Count; j++)
@@ -154,7 +148,7 @@ namespace FX_Core.ScanTypes
 
                 Shared.Print($"{Shared.PtrStr(ptr)} did not change the rest");
 
-                Thread.Sleep(100);
+                Wait(10);
             }
 
             // Reemplaza el contenido de la lista original por los candidatos, con su valor actual

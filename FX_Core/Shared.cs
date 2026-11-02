@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace FX_Core
 {
@@ -14,6 +9,8 @@ namespace FX_Core
         public static Random random = new Random();
 
         public static string PtrStr(IntPtr ptr) { return "0x" + ptr.ToString("X"); }
+
+        public static nint StringToPtr(string str) { return (nint)Convert.ToInt64(str, 16); }
 
         public static Exception FormatError(string text, Exception exception)
         { return new Exception($">>> {text}:\n         {exception.Message}\n\n"); }
